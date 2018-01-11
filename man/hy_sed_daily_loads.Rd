@@ -7,7 +7,7 @@
 \describe{
   \item{STATION_NUMBER}{Unique 7 digit Water Survey of Canada station number}
   \item{Date}{Observation date. Formatted as a Date class.}
-  \item{Parameter}{Parameter being measured. Only possible value is LOAD}
+  \item{Parameter}{Parameter being measured. Only possible value is Load}
   \item{Value}{Discharge value. The units are tonnes.}
 }}
 \source{
@@ -51,7 +51,7 @@ Other HYDAT functions: \code{\link{hy_agency_list}},
   \code{\link{hy_annual_instant_peaks}},
   \code{\link{hy_annual_stats}},
   \code{\link{hy_daily_flows}},
-  \code{\link{hy_daily_levels}},
+  \code{\link{hy_daily_levels}}, \code{\link{hy_daily}},
   \code{\link{hy_data_symbols}},
   \code{\link{hy_data_types}}, \code{\link{hy_datum_list}},
   \code{\link{hy_monthly_flows}},

@@ -2,21 +2,21 @@
 % Please edit documentation in R/download.R
 \name{realtime_dd}
 \alias{realtime_dd}
-\title{Download a tibble of realtime discharge data from the Meteorological Service of Canada datamart}
+\title{Download a tibble of realtime river data from the last 30 days from the Meteorological Service of Canada datamart}
 \format{A tibble with 8 variables:
 \describe{
   \item{STATION_NUMBER}{Unique 7 digit Water Survey of Canada station number}
   \item{PROV_TERR_STATE_LOC}{The province, territory or state in which the station is located}
-  \item{Date}{Observation date and time. Formatted as a POSIXct class as UTC for consistency.}
-  \item{Parameter}{Parameter being measured. Only possible values are FLOW and LEVEL}
-  \item{Value}{Value of the measurement. If Parameter equals FLOW the units are m^3/s. If Parameter equals LEVEL the 
-  units are metres.}
-  \item{Grade}{future use}
-  \item{Symbol}{future use}
+  \item{Date}{Observation date and time for last thirty days. Formatted as a POSIXct class as UTC for consistency.}
+  \item{Parameter}{Parameter being measured. Only possible values are Flow and Level}
+  \item{Value}{Value of the measurement. If Parameter equals Flow the units are m^3/s. 
+  If Parameter equals Level the units are metres.}
+  \item{Grade}{reserved for future use}
+  \item{Symbol}{reserved for future use}
   \item{Code}{quality assurance/quality control flag for the discharge}
 }}
 \usage{
-realtime_dd(station_number = NULL, prov_terr_state_loc)
+realtime_dd(station_number = NULL, prov_terr_state_loc = NULL)
 }
 \arguments{
 \item{station_number}{Water Survey of Canada station number. If this argument is omitted from the function call, the value of \code{prov_terr_state_loc}
@@ -29,9 +29,10 @@ is returned.}
 A tibble of water flow and level values.
 }
 \description{
-Download realtime discharge data from the Meteorological Service of Canada (MSC) datamart. The function will prioritize
-downloading data collected at the highest resolution. In instances where data is not available at high (hourly or higher) resolution
-daily averages are used. Currently, if a station does not exist or is not found, no data is returned.
+Download realtime river data from the last 30 days from the Meteorological Service of Canada (MSC) datamart. 
+The function will prioritize downloading data collected at the highest resolution. In instances where data is 
+not available at high (hourly or higher) resolution daily averages are used. Currently, if a station does not 
+exist or is not found, no data is returned.
 }
 \examples{
 \dontrun{

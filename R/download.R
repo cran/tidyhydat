@@ -11,11 +11,12 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 
-#' Download a tibble of realtime discharge data from the Meteorological Service of Canada datamart
+#' Download a tibble of realtime river data from the last 30 days from the Meteorological Service of Canada datamart
 #'
-#' Download realtime discharge data from the Meteorological Service of Canada (MSC) datamart. The function will prioritize
-#' downloading data collected at the highest resolution. In instances where data is not available at high (hourly or higher) resolution
-#' daily averages are used. Currently, if a station does not exist or is not found, no data is returned.
+#' Download realtime river data from the last 30 days from the Meteorological Service of Canada (MSC) datamart. 
+#' The function will prioritize downloading data collected at the highest resolution. In instances where data is 
+#' not available at high (hourly or higher) resolution daily averages are used. Currently, if a station does not 
+#' exist or is not found, no data is returned.
 #'
 #' @param station_number Water Survey of Canada station number. If this argument is omitted from the function call, the value of \code{prov_terr_state_loc}
 #' is returned.
@@ -28,12 +29,12 @@
 #' \describe{
 #'   \item{STATION_NUMBER}{Unique 7 digit Water Survey of Canada station number}
 #'   \item{PROV_TERR_STATE_LOC}{The province, territory or state in which the station is located}
-#'   \item{Date}{Observation date and time. Formatted as a POSIXct class as UTC for consistency.}
-#'   \item{Parameter}{Parameter being measured. Only possible values are FLOW and LEVEL}
-#'   \item{Value}{Value of the measurement. If Parameter equals FLOW the units are m^3/s. If Parameter equals LEVEL the 
-#'   units are metres.}
-#'   \item{Grade}{future use}
-#'   \item{Symbol}{future use}
+#'   \item{Date}{Observation date and time for last thirty days. Formatted as a POSIXct class as UTC for consistency.}
+#'   \item{Parameter}{Parameter being measured. Only possible values are Flow and Level}
+#'   \item{Value}{Value of the measurement. If Parameter equals Flow the units are m^3/s. 
+#'   If Parameter equals Level the units are metres.}
+#'   \item{Grade}{reserved for future use}
+#'   \item{Symbol}{reserved for future use}
 #'   \item{Code}{quality assurance/quality control flag for the discharge}
 #' }
 #'
@@ -48,7 +49,7 @@
 #' 
 #' @family realtime functions
 #' @export
-realtime_dd <- function(station_number = NULL, prov_terr_state_loc) {
+realtime_dd <- function(station_number = NULL, prov_terr_state_loc = NULL) {
 
   ## TODO: HAve a warning message if not internet connection exists
   if (!is.null(station_number) && station_number == "ALL") {
@@ -95,20 +96,20 @@ realtime_dd <- function(station_number = NULL, prov_terr_state_loc) {
       c(
         "STATION_NUMBER",
         "Date",
-        "LEVEL",
-        "LEVEL_GRADE",
-        "LEVEL_SYMBOL",
-        "LEVEL_CODE",
-        "FLOW",
-        "FLOW_GRADE",
-        "FLOW_SYMBOL",
-        "FLOW_CODE"
+        "Level",
+        "Level_GRADE",
+        "Level_SYMBOL",
+        "Level_CODE",
+        "Flow",
+        "Flow_GRADE",
+        "Flow_SYMBOL",
+        "Flow_CODE"
       )
     
     url_check <- httr::GET(infile[1])
     ## check if a valid url
     if(httr::http_error(url_check) == TRUE){
-      message(paste0("No hourly data found for ",STATION_NUMBER_SEL))
+      info(paste0("No hourly data found for ",STATION_NUMBER_SEL))
       
       h <- tibble::tibble(A = STATION_NUMBER_SEL, B = NA, C = NA, D = NA, E = NA,
                      F = NA, G = NA, H = NA, I = NA, J = NA)
@@ -124,14 +125,14 @@ realtime_dd <- function(station_number = NULL, prov_terr_state_loc) {
         col_types = readr::cols(
           STATION_NUMBER = readr::col_character(),
           Date = readr::col_datetime(),
-          LEVEL = readr::col_double(),
-          LEVEL_GRADE = readr::col_character(),
-          LEVEL_SYMBOL = readr::col_character(),
-          LEVEL_CODE = readr::col_integer(),
-          FLOW = readr::col_double(),
-          FLOW_GRADE = readr::col_character(),
-          FLOW_SYMBOL = readr::col_character(),
-          FLOW_CODE = readr::col_integer()
+          Level = readr::col_double(),
+          Level_GRADE = readr::col_character(),
+          Level_SYMBOL = readr::col_character(),
+          Level_CODE = readr::col_integer(),
+          Flow = readr::col_double(),
+          Flow_GRADE = readr::col_character(),
+          Flow_SYMBOL = readr::col_character(),
+          Flow_CODE = readr::col_integer()
         )
       )
     }
@@ -140,7 +141,7 @@ realtime_dd <- function(station_number = NULL, prov_terr_state_loc) {
     url_check_d <- httr::GET(infile[2])
     ## check if a valid url
     if(httr::http_error(url_check_d) == TRUE){
-      message(paste0("No daily data found for ",STATION_NUMBER_SEL))
+      info(paste0("No daily data found for ",STATION_NUMBER_SEL))
       
       d <- tibble::tibble(A = NA, B = NA, C = NA, D = NA, E = NA,
                           F = NA, G = NA, H = NA, I = NA, J = NA)
@@ -155,14 +156,14 @@ realtime_dd <- function(station_number = NULL, prov_terr_state_loc) {
         col_types = readr::cols(
           STATION_NUMBER = readr::col_character(),
           Date = readr::col_datetime(),
-          LEVEL = readr::col_double(),
-          LEVEL_GRADE = readr::col_character(),
-          LEVEL_SYMBOL = readr::col_character(),
-          LEVEL_CODE = readr::col_integer(),
-          FLOW = readr::col_double(),
-          FLOW_GRADE = readr::col_character(),
-          FLOW_SYMBOL = readr::col_character(),
-          FLOW_CODE = readr::col_integer()
+          Level = readr::col_double(),
+          Level_GRADE = readr::col_character(),
+          Level_SYMBOL = readr::col_character(),
+          Level_CODE = readr::col_integer(),
+          Flow = readr::col_double(),
+          Flow_GRADE = readr::col_character(),
+          Flow_SYMBOL = readr::col_character(),
+          Flow_CODE = readr::col_integer()
         )
       )
     }
@@ -179,7 +180,7 @@ realtime_dd <- function(station_number = NULL, prov_terr_state_loc) {
 
     ## Now tidy the data
     ## TODO: Find a better way to do this
-    output <- dplyr::rename(output, `LEVEL_` = LEVEL, `FLOW_` = FLOW)
+    output <- dplyr::rename(output, `Level_` = Level, `Flow_` = Flow)
     output <- tidyr::gather(output, temp, val, -STATION_NUMBER, -Date)
     output <- tidyr::separate(output, temp, c("Parameter", "key"), sep = "_", remove = TRUE)
     output <- dplyr::mutate(output, key = ifelse(key == "", "Value", key))
@@ -194,6 +195,10 @@ realtime_dd <- function(station_number = NULL, prov_terr_state_loc) {
 
     output_c <- dplyr::bind_rows(output, output_c)
   }
+  
+  ## What stations were missed?
+  #differ_msg(unique(stns), unique(output_c$STATION_NUMBER))
+  
   output_c
 }
 
@@ -286,23 +291,25 @@ download_hydat <- function(dl_hydat_here = NULL) {
     dl_hydat_here <- hy_dir()
   }
   
-  response <- readline(prompt = "Downloading HYDAT will take approximately 10 minutes. Are you sure you want to continue? (Y/N) ")
+  question <- "Downloading HYDAT will take ~10 minutes and will remove any older versions of HYDAT. Do you want to continue? (Y/N)"
+  response <- readline(prompt = info(question))
 
   if (!response %in% c("Y", "Yes", "yes", "y")) {
-    stop("Maybe another day...")
+    handle_error(stop(not_done("Maybe another day...")))
   }
   
-  message(paste0("Downloading HYDAT.sqlite3 to ",dl_hydat_here))
+  done(paste0("Downloading HYDAT.sqlite3 to ", crayon::red(dl_hydat_here)))
 
 
   ## Create actual hydat_path
-  hydat_path <- paste0(dl_hydat_here, "\\Hydat.sqlite3")
-
+  hydat_path <- file.path(dl_hydat_here, "Hydat.sqlite3")
+  
+  ## temporary path to save
   temp <- tempfile()
 
 
   ## If there is an existing hydat file get the date of release
-  if (length(list.files(dl_hydat_here, pattern = "Hydat.sqlite3")) == 1) {
+  if (file.exists(hydat_path)) {
     hy_version(hydat_path) %>%
       dplyr::mutate(condensed_date = paste0(
         substr(Date, 1, 4),
@@ -316,26 +323,40 @@ download_hydat <- function(dl_hydat_here = NULL) {
 
 
   ## Create the link to download HYDAT
-  base_url <- "http://collaboration.cmc.ec.gc.ca/cmc/hydrometrics/www/"
+  base_url <-
+    "http://collaboration.cmc.ec.gc.ca/cmc/hydrometrics/www/"
   x <- httr::GET(base_url)
   httr::stop_for_status(x)
-  new_hydat <- substr(gsub(
-    "^.*\\Hydat_sqlite3_", "",
-    httr::content(x, "text")
-  ), 1, 8)
+  new_hydat <- substr(gsub("^.*\\Hydat_sqlite3_", "",
+                           httr::content(x, "text")), 1, 8)
 
   ## Do we need to download a new version?
   if (new_hydat == existing_hydat) {
-    stop(paste0("The existing local version of hydat, published on ", lubridate::ymd(existing_hydat), ", is the most recent version available."))
+    handle_error(stop(not_done(paste0("The existing local version of hydat, published on ",
+                lubridate::ymd(existing_hydat),
+                ", is the most recent version available."))))
   } else {
-    message(paste0("Downloading version of hydat published on ", lubridate::ymd(new_hydat)))
+    done(paste0("Downloading version of HYDAT published on ", crayon::blue(lubridate::ymd(new_hydat))))
   }
 
   url <- paste0(base_url, "Hydat_sqlite3_", new_hydat, ".zip")
+  
+  ## Remove current version of HYDAT
+  if (file.exists(hydat_path)){
+    file.remove(hydat_path)
+  }
 
   utils::download.file(url, temp)
+  
+  if(file.exists(temp)) done("Extracting HYDAT")
 
-  utils::unzip(temp, files = (utils::unzip(temp, list = TRUE)$Name[1]), exdir = dl_hydat_here, overwrite = TRUE)
+  utils::unzip(temp, files = (utils::unzip(temp, list = TRUE)$Name[1]), 
+               exdir = dl_hydat_here, overwrite = TRUE)
+  
+  
+  if (file.exists(hydat_path)){
+    done(paste0("HYDAT successfully downloaded"))
+  } else(not_done("HYDAT not successfully downloaded"))
   
   invisible(TRUE)
 }

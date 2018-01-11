@@ -24,7 +24,7 @@
 #' \describe{
 #'   \item{STATION_NUMBER}{Unique 7 digit Water Survey of Canada station number}
 #'   \item{Date}{Observation date. Formatted as a Date class.}
-#'   \item{Parameter}{Parameter being measured. Only possible value is SUSCON}
+#'   \item{Parameter}{Parameter being measured. Only possible value is Suscon}
 #'   \item{Value}{Discharge value. The units are mg/l.}
 #'   \item{Symbol}{Measurement/river conditions}
 #' }
@@ -103,7 +103,7 @@ hy_sed_daily_suscon <- function(station_number = NULL,
   sed_dly_suscon <- dplyr::collect(sed_dly_suscon)
   
   if(is.data.frame(sed_dly_suscon) && nrow(sed_dly_suscon)==0)
-  {stop("This station is not present in HYDAT")}
+  {stop("No suspended sediment data for this station in HYDAT")}
   
   sed_dly_suscon <- tidyr::gather(sed_dly_suscon, variable, temp, -(STATION_NUMBER:NO_DAYS))
   sed_dly_suscon <- dplyr::mutate(sed_dly_suscon, DAY = as.numeric(gsub("SUSCON|SUSCON_SYMBOL", "", variable)))
@@ -124,7 +124,7 @@ hy_sed_daily_suscon <- function(station_number = NULL,
   
   
   sed_dly_suscon <- dplyr::left_join(sed_dly_suscon, hy_data_symbols, by = c("SUSCON_SYMBOL" = "SYMBOL_ID"))
-  sed_dly_suscon <- dplyr::mutate(sed_dly_suscon, Parameter = "SUSCON")
+  sed_dly_suscon <- dplyr::mutate(sed_dly_suscon, Parameter = "Suscon")
   
   ## Control for symbol ouput
   if(symbol_output == "code"){
@@ -144,18 +144,8 @@ hy_sed_daily_suscon <- function(station_number = NULL,
   colnames(sed_dly_suscon) <- c("STATION_NUMBER", "Date", "Parameter", "Value", "Symbol")
 
   ## What stations were missed?
-  differ <- setdiff(unique(stns), unique(sed_dly_suscon$STATION_NUMBER))
-  if (length(differ) != 0) {
-    if (length(differ) <= 10) {
-      message("The following station(s) were not retrieved: ", paste0(differ, sep = " "))
-      message("Check station number typos or if it is a valid station in the network")
-    }
-    else {
-      message("More than 10 stations from the initial query were not returned. Ensure realtime and active status are correctly specified.")
-    }
-  } else {
-    message("All station successfully retrieved")
-  }
+  differ_msg(unique(stns), unique(sed_dly_suscon$STATION_NUMBER))
+
 
   sed_dly_suscon
 }

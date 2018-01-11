@@ -7,7 +7,7 @@
 \describe{
   \item{STATION_NUMBER}{Unique 7 digit Water Survey of Canada station number}
   \item{Date}{Observation date. Formatted as a Date class.}
-  \item{Parameter}{Parameter being measured. Only possible value is LEVEL}
+  \item{Parameter}{Parameter being measured. Only possible value is Level}
   \item{Value}{Level value. The units are metres.}
   \item{Symbol}{Measurement/river conditions}
 }}
@@ -58,7 +58,7 @@ hy_daily_levels(prov_terr_state_loc = "PE")
 Other HYDAT functions: \code{\link{hy_agency_list}},
   \code{\link{hy_annual_instant_peaks}},
   \code{\link{hy_annual_stats}},
-  \code{\link{hy_daily_flows}},
+  \code{\link{hy_daily_flows}}, \code{\link{hy_daily}},
   \code{\link{hy_data_symbols}},
   \code{\link{hy_data_types}}, \code{\link{hy_datum_list}},
   \code{\link{hy_monthly_flows}},

@@ -6,29 +6,29 @@ knitr::opts_chunk$set(echo = TRUE,
                       fig.width=7, fig.height=7)
 
 ## ----packages, warning=FALSE, message=FALSE, echo = TRUE-----------------
-#  library(tidyhydat)
-#  library(dplyr)
+library(tidyhydat)
+library(dplyr)
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  download_hydat()
 
 ## ----example1, warning=FALSE---------------------------------------------
-#  hy_daily_flows(station_number = "08LA001")
+hy_daily_flows(station_number = "08LA001")
 
 ## ----example2, warning=FALSE---------------------------------------------
-#  PEI_stns <- hy_stations() %>%
-#    filter(HYD_STATUS == "ACTIVE") %>%
-#    filter(PROV_TERR_STATE_LOC == "PE") %>%
-#    pull(STATION_NUMBER)
-#  
-#  PEI_stns
-#  
-#  hy_daily_flows(station_number = PEI_stns)
+PEI_stns <- hy_stations() %>%
+  filter(HYD_STATUS == "ACTIVE") %>%
+  filter(PROV_TERR_STATE_LOC == "PE") %>%
+  pull(STATION_NUMBER)
+
+PEI_stns
+
+hy_daily_flows(station_number = PEI_stns)
 
 ## ---- example3-----------------------------------------------------------
-#  search_stn_name("canada") %>%
-#    pull(STATION_NUMBER) %>%
-#    hy_daily_flows()
+search_stn_name("canada") %>%
+  pull(STATION_NUMBER) %>%
+  hy_daily_flows()
 
 ## ----warning=FALSE, warning=FALSE, message=FALSE, eval=FALSE-------------
 #  hy_daily_flows(station_number = "08LA001",
@@ -47,8 +47,8 @@ knitr::opts_chunk$set(echo = TRUE,
 #  realtime_dd(prov_terr_state_loc = "PE")
 
 ## ---- echo=TRUE----------------------------------------------------------
-#  search_stn_name("liard")
+search_stn_name("liard")
 
 ## ---- echo=TRUE----------------------------------------------------------
-#  search_stn_number("08MF")
+search_stn_number("08MF")
 
