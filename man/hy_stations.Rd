@@ -10,6 +10,8 @@
   \item{PROV_TERR_STATE_LOC}{The province, territory or state in which the station is located}
   \item{REGIONAL_OFFICE_ID}{The identifier of the regional office responsible for the station. 
   Links to \link[tidyhydat]{hy_reg_office_list}}
+  \item{HYD_STATUS}{Current status of discharge or level monitoring in the hydrometric network}
+  \item{SED_STATUS}{Current status of sediment monitoring in the hydrometric network}
   \item{LATITUDE}{North-South Coordinates of the gauging station in decimal degrees}
   \item{LONGITUDE}{East-West Coordinates of the gauging station in decimal degrees}
   \item{DRAINAGE_AREA_GROSS}{The total surface area that drains to the gauge site (km^2)}
@@ -37,9 +39,10 @@ hy_stations(station_number = NULL, hydat_path = NULL,
 \item{station_number}{A seven digit Water Survey of Canada station number. If this argument is omitted, the value of \code{prov_terr_state_loc}
 is returned.}
 
-\item{hydat_path}{The default for this argument is to look for hydat in the same location where it
-was saved by using \code{download_hydat}. Therefore this argument is almost always omitted from a function call. 
-You can see where hydat was downloaded using \code{hy_dir()}}
+\item{hydat_path}{The path to the hydat database or NULL to use the default location
+used by \link{download_hydat}. It is also possible to pass in an existing 
+\link[dplyr]{src_sqlite} such that the database only needs to be opened once per
+user-level call.}
 
 \item{prov_terr_state_loc}{Province, state or territory. If this argument is omitted, the value of \code{station_number}
 is returned. See \code{unique(allstations$prov_terr_state_loc)}}

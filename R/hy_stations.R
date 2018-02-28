@@ -34,6 +34,8 @@
 #'   \item{PROV_TERR_STATE_LOC}{The province, territory or state in which the station is located}
 #'   \item{REGIONAL_OFFICE_ID}{The identifier of the regional office responsible for the station. 
 #'   Links to \link[tidyhydat]{hy_reg_office_list}}
+#'   \item{HYD_STATUS}{Current status of discharge or level monitoring in the hydrometric network}
+#'   \item{SED_STATUS}{Current status of sediment monitoring in the hydrometric network}
 #'   \item{LATITUDE}{North-South Coordinates of the gauging station in decimal degrees}
 #'   \item{LONGITUDE}{East-West Coordinates of the gauging station in decimal degrees}
 #'   \item{DRAINAGE_AREA_GROSS}{The total surface area that drains to the gauge site (km^2)}
@@ -72,21 +74,11 @@ hy_stations <- function(station_number = NULL,
     stop("Deprecated behaviour.Omit the station_number = \"ALL\" argument. See ?realtime_dd for examples.")
   }
 
-  if(is.null(hydat_path)){
-    hydat_path <- file.path(hy_dir(),"Hydat.sqlite3")
-  }
-  
-  ## Check if hydat is present
-  if (!file.exists(hydat_path)){
-    stop(paste0("No Hydat.sqlite3 found at ",hy_dir(),". Run download_hydat() to download the database."))
-  }
-  
-
-
   ## Read in database
-  hydat_con <- DBI::dbConnect(RSQLite::SQLite(), hydat_path)
-  
-  on.exit(DBI::dbDisconnect(hydat_con))
+  hydat_con <- hy_src(hydat_path)
+  if (!dplyr::is.src(hydat_path)) {
+    on.exit(hy_src_disconnect(hydat_con))
+  }
 
   ## Determine which stations we are querying
   stns <- station_choice(hydat_con, station_number, prov_terr_state_loc)

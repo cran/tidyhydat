@@ -1,3 +1,25 @@
+tidyhydat 0.3.3
+=========================
+### NEW FEATURES
+  * Open a connection to the HYDAT database directly using `hy_src()` for advanced functionality (PR#77).
+  * New vignette outlining `hy_src()` (PR#77)
+  * Add some tools to improve the usability of the test database (PR#77).
+  * `download_hydat()` now uses `httr::GET()`
+
+### MINOR IMPROVEMENTS
+  * Better downloading messages
+  
+### BUG FIXES
+  * Fixed package startup message so it can be supressed. (#79)
+  * Fixed bug that resulted in `download_hydat` choice wasn't respected.
+  * `onAttach()` now checks 115 days after last HYDAT release to prevent slow package load times if HYDAT is longer than 3 months between RELEASES.
+  * Fixed margin error in `hy_plot()`
+  * Fixed a bug in `realtime_plot()` that prevented a lake level station from being called
+  * Fixed a bug in `hy_daily()` that threw an error when only a level station was called
+  * Added new tests for `hy_daily()` and `realtime_plot()`
+  * Added `HYD_STATUS` and `REAL_TIME` columns to `allstations`. 
+
+
 tidyhydat 0.3.2
 =========================
 ### NEW FEATURES
