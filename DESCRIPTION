@@ -1,7 +1,8 @@
 Package: tidyhydat
 Title: Extract and Tidy Canadian 'Hydrometric' Data
-Version: 0.3.3
-Authors@R: c(person("Sam", "Albers", email = "sam.albers@gov.bc.ca", role = c("aut", "cre")),
+Version: 0.3.4
+Authors@R: c(person("Sam", "Albers", email = "sam.albers@gov.bc.ca", role = c("aut", "cre"),
+    comment = c(ORCID = "0000-0002-9270-7884")),
     person("David", "Hutchinson", email = "david.hutchinson@canada.ca", role = "ctb"),
     person("Dewey", "Dunnington", email = "dewey@fishandwhistle.net", role = "ctb"),
     person("Province of British Columbia", role = "cph"),
@@ -10,25 +11,25 @@ Authors@R: c(person("Sam", "Albers", email = "sam.albers@gov.bc.ca", role = c("a
     person("Laura", "DeCicco", role = "rev", 
             comment = "Reviewed for rOpenSci")
     )
-Description: Provides functions to extract historical and real-time national 'hydrometric'
+Description: Provides functions to access historical and real-time national 'hydrometric'
     data from Water Survey of Canada data sources (<http://dd.weather.gc.ca/hydrometric/csv/> and
     <http://collaboration.cmc.ec.gc.ca/cmc/hydrometrics/www/>) and then applies tidy data principles.
-Depends: R (>= 3.2.0)
 License: Apache License (== 2.0) | file LICENSE
 URL: https://github.com/ropensci/tidyhydat
 BugReports: https://github.com/ropensci/tidyhydat/issues
+Depends: R (>= 3.2.0)
+Imports: cli (>= 1.0.0), crayon (>= 1.3.4), DBI (>= 0.7), dbplyr (>=
+        1.1.0), dplyr (>= 0.7.4), httr (>= 1.3.1), lubridate (>=
+        1.6.0), rappdirs (>= 0.3.1), readr (>= 1.1.1), rlang (>=
+        0.1.2), RSQLite (>= 2.0), tidyr (>= 0.7.1)
+Suggests: ggplot2, knitr, rmarkdown, testthat, covr
+VignetteBuilder: knitr
 Encoding: UTF-8
-Imports: dplyr (>= 0.7.4), readr (>= 1.1.1), dbplyr (>= 1.1.0),
-        lubridate (>= 1.6.0), tidyr (>= 0.7.1), DBI (>= 0.7), RSQLite
-        (>= 2.0), tibble (>= 1.3.4), httr (>= 1.3.1), cli (>= 1.0.0),
-        crayon (>= 1.3.4), rappdirs (>= 0.3.1)
-Suggests: ggplot2, knitr, rmarkdown, testthat
 LazyData: true
 RoxygenNote: 6.0.1
-VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2018-02-28 19:41:21 UTC; salbers
-Author: Sam Albers [aut, cre],
+Packaged: 2018-05-01 20:38:14 UTC; salbers
+Author: Sam Albers [aut, cre] (<https://orcid.org/0000-0002-9270-7884>),
   David Hutchinson [ctb],
   Dewey Dunnington [ctb],
   Province of British Columbia [cph],
@@ -36,4 +37,4 @@ Author: Sam Albers [aut, cre],
   Laura DeCicco [rev] (Reviewed for rOpenSci)
 Maintainer: Sam Albers <sam.albers@gov.bc.ca>
 Repository: CRAN
-Date/Publication: 2018-02-28 19:51:01 UTC
+Date/Publication: 2018-05-01 21:41:41 UTC

@@ -32,14 +32,16 @@ hy_stn_remarks <- function(station_number = NULL,
 
   ## Determine which stations we are querying
   stns <- station_choice(hydat_con, station_number, prov_terr_state_loc)
+  
+  ## Creating rlang symbols
+  sym_STATION_NUMBER <- sym("STATION_NUMBER")
 
-  stn_remarks <- dplyr::tbl(hydat_con, "STN_REMARKS") %>%
-    dplyr::filter(STATION_NUMBER %in% stns) %>%
-    dplyr::left_join(dplyr::tbl(hydat_con, "STN_REMARK_CODES"), by = c("REMARK_TYPE_CODE")) %>%
-    dplyr::select(STATION_NUMBER, REMARK_TYPE_EN, YEAR, REMARK_EN) %>%
-    dplyr::collect()
-
-  stn_remarks
+  stn_remarks <- dplyr::tbl(hydat_con, "STN_REMARKS") 
+  stn_remarks <- dplyr::filter(stn_remarks, !!sym_STATION_NUMBER %in% stns)
+  stn_remarks <- dplyr::left_join(stn_remarks, dplyr::tbl(hydat_con, "STN_REMARK_CODES"), by = c("REMARK_TYPE_CODE"))
+  stn_remarks <- dplyr::select(stn_remarks, .data$STATION_NUMBER, .data$REMARK_TYPE_EN, .data$YEAR, .data$REMARK_EN)
+  
+  dplyr::collect(stn_remarks)
 }
 
 #' Extract station datum conversions from HYDAT database
@@ -74,17 +76,20 @@ hy_stn_datum_conv <- function(station_number = NULL,
 
   ## Determine which stations we are querying
   stns <- station_choice(hydat_con, station_number, prov_terr_state_loc)
+  
+  ## Creating rlang symbols
+  sym_STATION_NUMBER <- sym("STATION_NUMBER")
+  sym_DATUM_EN <- sym("DATUM_EN")
 
-  stn_datum_conversion <- dplyr::tbl(hydat_con, "STN_DATUM_CONVERSION") %>%
-    dplyr::filter(STATION_NUMBER %in% stns) %>%
-    dplyr::left_join(dplyr::tbl(hydat_con, "DATUM_LIST"), by = c("DATUM_ID_FROM" = "DATUM_ID")) %>%
-    dplyr::rename(DATUM_EN_FROM = DATUM_EN) %>%
-    dplyr::left_join(dplyr::tbl(hydat_con, "DATUM_LIST"), by = c("DATUM_ID_TO" = "DATUM_ID")) %>%
-    dplyr::rename(DATUM_EN_TO = DATUM_EN) %>%
-    dplyr::select(STATION_NUMBER, DATUM_EN_FROM, DATUM_EN_TO, CONVERSION_FACTOR) %>%
-    dplyr::collect()
-
-  stn_datum_conversion
+  stn_datum_conversion <- dplyr::tbl(hydat_con, "STN_DATUM_CONVERSION") 
+  stn_datum_conversion <- dplyr::filter(stn_datum_conversion, !!sym_STATION_NUMBER %in% stns)
+  stn_datum_conversion <- dplyr::left_join(stn_datum_conversion, dplyr::tbl(hydat_con, "DATUM_LIST"), by = c("DATUM_ID_FROM" = "DATUM_ID"))
+  stn_datum_conversion <- dplyr::rename(stn_datum_conversion, DATUM_EN_FROM = !!sym_DATUM_EN)
+  stn_datum_conversion <- dplyr::left_join(stn_datum_conversion, dplyr::tbl(hydat_con, "DATUM_LIST"), by = c("DATUM_ID_TO" = "DATUM_ID"))
+  stn_datum_conversion <- dplyr::rename(stn_datum_conversion, DATUM_EN_TO = !!sym_DATUM_EN)
+  stn_datum_conversion <- dplyr::select(stn_datum_conversion, .data$STATION_NUMBER, .data$DATUM_EN_FROM, .data$DATUM_EN_TO, .data$CONVERSION_FACTOR)
+  
+  dplyr::collect(stn_datum_conversion)
 }
 
 #' Extract station datum unrelated from HYDAT database
@@ -119,11 +124,19 @@ hy_stn_datum_unrelated <- function(station_number = NULL,
   ## Determine which stations we are querying
   stns <- station_choice(hydat_con, station_number, prov_terr_state_loc)
   
-  stn_datum_unrelated <- dplyr::tbl(hydat_con, "STN_DATUM_UNRELATED") %>%
-    dplyr::filter(STATION_NUMBER %in% stns) %>%
-    dplyr::collect() 
+  ## Creating rlang symbols
+  sym_STATION_NUMBER <- sym("STATION_NUMBER")
   
-  stn_datum_unrelated
+  stn_datum_unrelated <- dplyr::tbl(hydat_con, "STN_DATUM_UNRELATED")
+  stn_datum_unrelated <- dplyr::filter(stn_datum_unrelated, !!sym_STATION_NUMBER %in% stns)
+  stn_datum_unrelated <- dplyr::collect(stn_datum_unrelated) 
+  
+  stn_datum_unrelated$YEAR_FROM <- lubridate::ymd(as.Date(stn_datum_unrelated$YEAR_FROM))
+  stn_datum_unrelated$YEAR_TO <- lubridate::ymd(as.Date(stn_datum_unrelated$YEAR_TO))
+  
+  stn_datum_unrelated  
+  
+  
 }
 
 #' Extract station data range from HYDAT database
@@ -164,12 +177,14 @@ hy_stn_data_range <- function(station_number = NULL,
   ## Determine which stations we are querying
   stns <- station_choice(hydat_con, station_number, prov_terr_state_loc)
   
-  stn_data_range <- dplyr::tbl(hydat_con, "STN_DATA_RANGE") %>%
-    dplyr::filter(STATION_NUMBER %in% stns) %>%
-    dplyr::collect()
+  ## Creating rlang symbols
+  sym_STATION_NUMBER <- sym("STATION_NUMBER")
   
-  stn_data_range
-}
+  stn_data_range <- dplyr::tbl(hydat_con, "STN_DATA_RANGE")
+  stn_data_range <- dplyr::filter(stn_data_range, !!sym_STATION_NUMBER %in% stns)
+    
+  dplyr::collect(stn_data_range)
+  }
 
 #' Extract station data collection from HYDAT database
 #'
@@ -210,17 +225,19 @@ hy_stn_data_coll <- function(station_number = NULL,
   ## Determine which stations we are querying
   stns <- station_choice(hydat_con, station_number, prov_terr_state_loc)
   
-  stn_data_coll <- dplyr::tbl(hydat_con, "STN_DATA_COLLECTION") %>%
-    dplyr::filter(STATION_NUMBER %in% stns) %>%
-    dplyr::left_join(dplyr::tbl(hydat_con, "MEASUREMENT_CODES"), by = c("MEASUREMENT_CODE")) %>%
-    dplyr::left_join(dplyr::tbl(hydat_con, "OPERATION_CODES"), by = c("OPERATION_CODE")) %>%
-    dplyr::collect() %>%
-    dplyr::left_join(tidyhydat::hy_data_types, by = c("DATA_TYPE")) %>%
-    dplyr::select(STATION_NUMBER, DATA_TYPE_EN, YEAR_FROM, YEAR_TO, MEASUREMENT_EN, OPERATION_EN) %>%
-    dplyr::arrange(STATION_NUMBER, YEAR_FROM)
+  ## Creating rlang symbols
+  sym_STATION_NUMBER <- sym("STATION_NUMBER")
   
+  stn_data_coll <- dplyr::tbl(hydat_con, "STN_DATA_COLLECTION")
+  stn_data_coll <- dplyr::filter(stn_data_coll, !!sym_STATION_NUMBER %in% stns)
+  stn_data_coll <- dplyr::left_join(stn_data_coll, dplyr::tbl(hydat_con, "MEASUREMENT_CODES"), by = c("MEASUREMENT_CODE"))
+  stn_data_coll <- dplyr::left_join(stn_data_coll, dplyr::tbl(hydat_con, "OPERATION_CODES"), by = c("OPERATION_CODE"))
+  stn_data_coll <- dplyr::collect(stn_data_coll)
   
-  stn_data_coll
+  stn_data_coll <- dplyr::left_join(stn_data_coll, tidyhydat::hy_data_types, by = c("DATA_TYPE"))
+  stn_data_coll <- dplyr::select(stn_data_coll, .data$STATION_NUMBER, .data$DATA_TYPE_EN, .data$YEAR_FROM, .data$YEAR_TO, 
+                  .data$MEASUREMENT_EN, .data$OPERATION_EN)
+  dplyr::arrange(stn_data_coll, .data$STATION_NUMBER, .data$YEAR_FROM)
 }
 
 
@@ -261,11 +278,158 @@ hy_stn_op_schedule <- function(station_number = NULL,
   ## Determine which stations we are querying
   stns <- station_choice(hydat_con, station_number, prov_terr_state_loc)
   
-  stn_operation_schedule <- dplyr::tbl(hydat_con, "STN_OPERATION_SCHEDULE") %>%
-    dplyr::filter(STATION_NUMBER %in% stns) %>%
-    dplyr::collect() %>%
-    dplyr::left_join(tidyhydat::hy_data_types, by = c("DATA_TYPE")) %>%
-    dplyr::select(STATION_NUMBER, DATA_TYPE_EN, YEAR, MONTH_FROM, MONTH_TO)
+  ## Creating rlang symbols
+  sym_STATION_NUMBER <- sym("STATION_NUMBER")
   
-  stn_operation_schedule
+  stn_operation_schedule <- dplyr::tbl(hydat_con, "STN_OPERATION_SCHEDULE")
+  stn_operation_schedule <- dplyr::filter(stn_operation_schedule, !!sym_STATION_NUMBER %in% stns)
+  stn_operation_schedule <- dplyr::collect(stn_operation_schedule)
+  stn_operation_schedule <- dplyr::left_join(stn_operation_schedule, tidyhydat::hy_data_types, by = c("DATA_TYPE"))
+  
+  dplyr::select(stn_operation_schedule, .data$STATION_NUMBER, .data$DATA_TYPE_EN, .data$YEAR, .data$MONTH_FROM, .data$MONTH_TO)
 }
+
+#' @title Wrapped on rappdirs::user_data_dir("tidyhydat")
+#'
+#' @description A function to avoid having to always type rappdirs::user_data_dir("tidyhydat")
+#' 
+#' @param ... arguments potentially passed to \code{rappdirs::user_data_dir}
+#' 
+#' @examples \dontrun{
+#' hy_dir()
+#' }
+#'
+#' @export
+#'
+#'
+hy_dir <- function(...){
+  rappdirs::user_data_dir("tidyhydat")
+}
+
+#' hy_agency_list function
+#'
+#' AGENCY look-up Table
+#' 
+#' @param hydat_path The path to the hydat database or NULL to use the default location
+#'   used by \link{download_hydat}. It is also possible to pass in an existing 
+#'   \link[dplyr]{src_sqlite} such that the database only needs to be opened once per
+#'   user-level call.
+#'
+#' @return A tibble of agencies
+#'
+#' @family HYDAT functions
+#' @source HYDAT
+#' @export
+#' @examples
+#' \dontrun{
+#' hy_agency_list()
+#'}
+#'
+hy_agency_list <- function(hydat_path = NULL) {
+  
+  ## Read in database
+  hydat_con <- hy_src(hydat_path)
+  if (!dplyr::is.src(hydat_path)) {
+    on.exit(hy_src_disconnect(hydat_con))
+  }
+  
+  agency_list <- dplyr::tbl(hydat_con, "AGENCY_LIST") %>%
+    dplyr::collect()
+  
+  agency_list
+}
+
+
+#'  Extract regional office list from HYDAT database
+#'
+#'  OFFICE look-up Table
+#' @inheritParams hy_agency_list
+#' @return A tibble of offices
+#'
+#' @family HYDAT functions
+#' @source HYDAT
+#' @export
+#' @examples
+#' \dontrun{
+#' hy_reg_office_list()
+#'}
+#'
+#'
+hy_reg_office_list <- function(hydat_path = NULL) {
+  
+  ## Read in database
+  hydat_con <- hy_src(hydat_path)
+  if (!dplyr::is.src(hydat_path)) {
+    on.exit(hy_src_disconnect(hydat_con))
+  }
+  
+  regional_office_list <- dplyr::tbl(hydat_con, "REGIONAL_OFFICE_LIST") %>%
+    dplyr::collect()
+  
+  regional_office_list
+}
+
+#'  Extract datum list from HYDAT database
+#'
+#'  DATUM look-up Table
+#' @inheritParams hy_agency_list
+#'
+#' @return A tibble of DATUMS
+#'
+#' @family HYDAT functions
+#' @source HYDAT
+#' @examples
+#' \dontrun{
+#' hy_datum_list()
+#'}
+#'
+#' @export
+#'
+hy_datum_list <- function(hydat_path = NULL) {
+  ## Read in database
+  hydat_con <- hy_src(hydat_path)
+  if (!dplyr::is.src(hydat_path)) {
+    on.exit(hy_src_disconnect(hydat_con))
+  }
+  
+  datum_list <- dplyr::tbl(hydat_con, "DATUM_LIST") %>%
+    dplyr::collect()
+  
+  datum_list
+}
+
+
+#' Extract version number from HYDAT database
+#' 
+#' A function to get version number of hydat
+#'
+#' @inheritParams hy_agency_list
+#'
+#' @return version number and release date
+#'
+#' @family HYDAT functions
+#' @source HYDAT
+#' @export
+#' @examples
+#' \dontrun{
+#' hy_version()
+#'}
+#'
+#'
+hy_version <- function(hydat_path = NULL) {
+  
+  ## Read in database
+  hydat_con <- hy_src(hydat_path)
+  if (!dplyr::is.src(hydat_path)) {
+    on.exit(hy_src_disconnect(hydat_con))
+  }
+  
+  version <- dplyr::tbl(hydat_con, "VERSION") %>%
+    dplyr::collect() %>%
+    dplyr::mutate(Date = lubridate::ymd_hms(.data$Date))
+  
+  version
+  
+}
+
+

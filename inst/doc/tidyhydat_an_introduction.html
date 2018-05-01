@@ -12,7 +12,7 @@
 
 <meta name="author" content="Sam Albers" />
 
-<meta name="date" content="2018-02-28" />
+<meta name="date" content="2018-05-01" />
 
 <title>tidyhydat: An Introduction</title>
 
@@ -70,13 +70,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">tidyhydat: An Introduction</h1>
 <h4 class="author"><em>Sam Albers</em></h4>
-<h4 class="date"><em>2018-02-28</em></h4>
+<h4 class="date"><em>2018-05-01</em></h4>
 
 
 
-<blockquote>
-<p>“Tidy datasets are all alike but every messy dataset is messy in its own way” - <span class="citation">@wickham2014tidy</span></p>
-</blockquote>
 <div id="package-loading" class="section level2">
 <h2>Package loading</h2>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyhydat)
@@ -99,16 +96,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <pre><code>## # A tibble: 29,159 x 5
 ##    STATION_NUMBER Date       Parameter Value Symbol
 ##    &lt;chr&gt;          &lt;date&gt;     &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt; 
-##  1 08LA001        1914-01-01 Flow       144. &lt;NA&gt;  
-##  2 08LA001        1914-01-02 Flow       144. &lt;NA&gt;  
-##  3 08LA001        1914-01-03 Flow       144. &lt;NA&gt;  
-##  4 08LA001        1914-01-04 Flow       140. &lt;NA&gt;  
-##  5 08LA001        1914-01-05 Flow       140. &lt;NA&gt;  
-##  6 08LA001        1914-01-06 Flow       136. &lt;NA&gt;  
-##  7 08LA001        1914-01-07 Flow       136. &lt;NA&gt;  
-##  8 08LA001        1914-01-08 Flow       140. &lt;NA&gt;  
-##  9 08LA001        1914-01-09 Flow       140. &lt;NA&gt;  
-## 10 08LA001        1914-01-10 Flow       140. &lt;NA&gt;  
+##  1 08LA001        1914-01-01 Flow        144 &lt;NA&gt;  
+##  2 08LA001        1914-01-02 Flow        144 &lt;NA&gt;  
+##  3 08LA001        1914-01-03 Flow        144 &lt;NA&gt;  
+##  4 08LA001        1914-01-04 Flow        140 &lt;NA&gt;  
+##  5 08LA001        1914-01-05 Flow        140 &lt;NA&gt;  
+##  6 08LA001        1914-01-06 Flow        136 &lt;NA&gt;  
+##  7 08LA001        1914-01-07 Flow        136 &lt;NA&gt;  
+##  8 08LA001        1914-01-08 Flow        140 &lt;NA&gt;  
+##  9 08LA001        1914-01-09 Flow        140 &lt;NA&gt;  
+## 10 08LA001        1914-01-10 Flow        140 &lt;NA&gt;  
 ## # ... with 29,149 more rows</code></pre>
 <p>Another method is to use <code>hy_stations()</code> to generate your vector which is then given the <code>station_number</code> argument. For example, we could take a subset for only those active stations within Prince Edward Island (Province code:PE) and then create vector for <code>hy_daily_flows()</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">PEI_stns &lt;-<span class="st"> </span><span class="kw">hy_stations</span>() <span class="op">%&gt;%</span>
@@ -148,7 +145,7 @@ PEI_stns</code></pre></div>
 ##  6 01AK001        1918-08-06 Flow      NA    &lt;NA&gt;  
 ##  7 01AK001        1918-08-07 Flow       1.78 &lt;NA&gt;  
 ##  8 01AK001        1918-08-08 Flow       1.78 &lt;NA&gt;  
-##  9 01AK001        1918-08-09 Flow       1.50 &lt;NA&gt;  
+##  9 01AK001        1918-08-09 Flow       1.5  &lt;NA&gt;  
 ## 10 01AK001        1918-08-10 Flow       1.78 &lt;NA&gt;  
 ## # ... with 76,669 more rows</code></pre>
 <p>We saw above that if we were only interested in a subset of dates we could use the <code>start_date</code> and <code>end_date</code> arguments. A date must be supplied to both these arguments in the form of YYYY-MM-DD. If you were interested in all daily flow data from station number “08LA001” for 1981, you would specify all days in 1981 :</p>
@@ -168,13 +165,13 @@ PEI_stns</code></pre></div>
 <p><code>hy_stations()</code> and <code>realtime_stations()</code> perform similar tasks albeit on different data sources. <code>hy_stations()</code> extracts directly from HYDAT. In addition to real-time stations, <code>hy_stations()</code> outputs discontinued and non-real-time stations:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hy_stations</span>(<span class="dt">prov_terr_state_loc =</span> <span class="st">&quot;PE&quot;</span>)</code></pre></div>
 <p>This is contrast to <code>realtime_stations()</code> which downloads all real-time stations. Though this is not always the case, it is best to use <code>realtime_stations()</code> when dealing with real-time data and <code>hy_stations()</code> when interacting with HYDAT. It is also appropriate to filter the output of <code>hy_stations()</code> by the <code>REAL_TIME</code> column.</p>
-</div>
-<div id="meterological-service-of-canada-datamart---realtime_dd" class="section level2">
-<h2>Meterological Service of Canada datamart - <code>realtime_dd()</code></h2>
+<div id="meterological-service-of-canada-datamart---realtime_dd" class="section level3">
+<h3>Meterological Service of Canada datamart - <code>realtime_dd()</code></h3>
 <p>To download real-time data using the datamart we can use approximately the same conventions discussed above. Using <code>realtime_dd()</code> we can easily select specific stations by supplying a station of interest:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">realtime_dd</span>(<span class="dt">station_number =</span> <span class="st">&quot;08LG006&quot;</span>)</code></pre></div>
 <p>Another option is to provide simply the province as an argument and download all stations from that province:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">realtime_dd</span>(<span class="dt">prov_terr_state_loc =</span> <span class="st">&quot;PE&quot;</span>)</code></pre></div>
+</div>
 </div>
 <div id="search-functions" class="section level2">
 <h2>Search functions</h2>
