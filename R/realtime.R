@@ -29,13 +29,14 @@
 #' \describe{
 #'   \item{STATION_NUMBER}{Unique 7 digit Water Survey of Canada station number}
 #'   \item{PROV_TERR_STATE_LOC}{The province, territory or state in which the station is located}
-#'   \item{Date}{Observation date and time for last thirty days. Formatted as a POSIXct class as UTC for consistency.}
+#'   \item{Date}{Observation date and time for last thirty days. Formatted as a POSIXct class in UTC for consistency.}
 #'   \item{Parameter}{Parameter being measured. Only possible values are Flow and Level}
 #'   \item{Value}{Value of the measurement. If Parameter equals Flow the units are m^3/s. 
 #'   If Parameter equals Level the units are metres.}
 #'   \item{Grade}{reserved for future use}
 #'   \item{Symbol}{reserved for future use}
 #'   \item{Code}{quality assurance/quality control flag for the discharge}
+#'   \item{station_tz}{Station timezone based on tidyhydat::allstations$station_tz}
 #' }
 #'
 #' @examples
@@ -58,12 +59,16 @@ realtime_dd <- function(station_number = NULL, prov_terr_state_loc = NULL) {
   
   ## If station number isn't and user wants the province
   if (is.null(station_number)) {
-    all_prov_stations <- lapply(prov_terr_state_loc, all_realtime_station)
-    dplyr::bind_rows(all_prov_stations)
-  } else{
-    list_o_stations <- lapply(station_number, single_realtime_station)
-    dplyr::bind_rows(list_o_stations)
-  }
+    realtime_data <- lapply(prov_terr_state_loc, all_realtime_station)
+      } else{
+    realtime_data <- lapply(station_number, single_realtime_station)
+      }
+  
+  dplyr::bind_rows(realtime_data)
+  
+
+  
+  
 
 
 
@@ -107,7 +112,7 @@ realtime_stations <- function(prov_terr_state_loc = NULL) {
   
   realtime_link <- "http://dd.weather.gc.ca/hydrometric/doc/hydrometric_StationList.csv"
 
-  url_check <- httr::GET(realtime_link)
+  url_check <- httr::GET(realtime_link,httr::user_agent("https://github.com/ropensci/tidyhydat"))
   
   ## Checking to make sure the link is valid
   if(httr::http_error(url_check) == "TRUE"){
@@ -143,6 +148,49 @@ realtime_stations <- function(prov_terr_state_loc = NULL) {
 
   net_tibble <- dplyr::filter(net_tibble, .data$PROV_TERR_STATE_LOC %in% prov)
   net_tibble
+}
+
+#' Add local datetime column to realtime tibble
+#' 
+#' Adds \code{local_datetime} and \code{tz_used} columns based on either the first timezone specified into the tibble or
+#' a user supplied timezone. This function is meant to used in a pipe with the \code{realtime_dd()} function. 
+#' 
+#' @param .data Tibble created by \code{realtime_dd}
+#' @param set_tz A timezone string in the format of \code{OlsonNames()}
+#' 
+#' @details Date from realtime_dd is supplied in UTC which is the easiest format to work with across timezones. 
+#' \code{realtime_add_local_datetime} adjusts local_datetime to a common timezone. This is most useful when all stations exist
+#' within the same timezone though it is possible.
+#' 
+#' @examples
+#' \dontrun{
+#'
+#' realtime_dd(c("08MF005","02LA004")) %>%
+#'  realtime_add_local_datetime()
+#' }
+#' 
+#' @export
+realtime_add_local_datetime <- function(.data, set_tz = NULL){
+  
+  timezone_data <- dplyr::left_join(.data, tidyhydat::allstations[,c("STATION_NUMBER", "station_tz")], by = c("STATION_NUMBER"))
+  
+  tz_used <- timezone_data$station_tz[1]
+  
+  if(dplyr::n_distinct(timezone_data$station_tz) > 1) {
+    warning(paste0("Multiple timezones detected. All times in local_time have been adjusted to ", tz_used), call. = FALSE)
+  }
+  
+  if(!is.null(set_tz)) {
+    message(paste0("Using ", set_tz," timezones"))
+    tz_used <- set_tz 
+  }
+  
+  timezone_data$local_datetime <- lubridate::with_tz(timezone_data$Date, tz = tz_used)
+  
+  timezone_data$tz_used <- tz_used
+  
+  dplyr::select(timezone_data, .data$STATION_NUMBER, .data$PROV_TERR_STATE_LOC, .data$Date, 
+                .data$station_tz, .data$local_datetime, .data$tz_used, dplyr::everything())
 }
 
 

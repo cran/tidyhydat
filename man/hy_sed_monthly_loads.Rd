@@ -6,10 +6,10 @@
 \format{A tibble with 8 variables:
 \describe{
   \item{STATION_NUMBER}{Unique 7 digit Water Survey of Canada station number}
-  \item{YEAR}{Year of record.}
-  \item{MONTH}{Numeric month value}
-  \item{FULL_MONTH}{Logical value is there is full record from MONTH}
-  \item{NO_DAYS}{Number of days in that month}
+  \item{Year}{Year of record.}
+  \item{Month}{Numeric month value}
+  \item{Full_Month}{Logical value is there is full record from Month}
+  \item{No_days}{Number of days in that month}
   \item{Sum_stat}{Summary statistic being used.} 
   \item{Value}{Value of the measurement in tonnes.}
   \item{Date_occurred}{Observation date. Formatted as a Date class. MEAN is a annual summary 
@@ -20,7 +20,7 @@ HYDAT
 }
 \usage{
 hy_sed_monthly_loads(station_number = NULL, hydat_path = NULL,
-  prov_terr_state_loc = NULL, start_date = "ALL", end_date = "ALL")
+  prov_terr_state_loc = NULL, start_date = NULL, end_date = NULL)
 }
 \arguments{
 \item{station_number}{A seven digit Water Survey of Canada station number. If this argument is omitted, the value of \code{prov_terr_state_loc}
@@ -73,3 +73,4 @@ Other HYDAT functions: \code{\link{hy_agency_list}},
   \code{\link{hy_stn_op_schedule}},
   \code{\link{hy_stn_regulation}}, \code{\link{hy_version}}
 }
+\concept{HYDAT functions}

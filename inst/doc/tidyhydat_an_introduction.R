@@ -19,7 +19,7 @@ hy_daily_flows(station_number = "08LA001")
 PEI_stns <- hy_stations() %>%
   filter(HYD_STATUS == "ACTIVE") %>%
   filter(PROV_TERR_STATE_LOC == "PE") %>%
-  pull(STATION_NUMBER)
+  pull_station_number()
 
 PEI_stns
 
@@ -27,7 +27,7 @@ hy_daily_flows(station_number = PEI_stns)
 
 ## ---- example3-----------------------------------------------------------
 search_stn_name("canada") %>%
-  pull(STATION_NUMBER) %>%
+  pull_station_number() %>%
   hy_daily_flows()
 
 ## ----warning=FALSE, warning=FALSE, message=FALSE, eval=FALSE-------------

@@ -7,7 +7,7 @@
 \describe{
   \item{STATION_NUMBER}{Unique 7 digit Water Survey of Canada station number}
   \item{SED_DATA_TYPE}{Contains the type of sampling method used in collecting sediment for a station}
-  \item{DATE}{Contains the time to the nearest minute of when the sample was taken}
+  \item{Date}{Contains the time to the nearest minute of when the sample was taken}
   \item{SAMPLE_REMARK_CODE}{Descriptive Sediment Sample Remark in English}
   \item{TIME_SYMBOL}{An "E" symbol means the time is an estimate only}
   \item{FLOW}{Contains the instantaneous discharge in cubic metres per second at the time the sample was taken}
@@ -28,7 +28,7 @@ HYDAT
 }
 \usage{
 hy_sed_samples(station_number = NULL, hydat_path = NULL,
-  prov_terr_state_loc = NULL, start_date = "ALL", end_date = "ALL")
+  prov_terr_state_loc = NULL, start_date = NULL, end_date = NULL)
 }
 \arguments{
 \item{station_number}{A seven digit Water Survey of Canada station number. If this argument is omitted, the value of \code{prov_terr_state_loc}
@@ -82,3 +82,4 @@ Other HYDAT functions: \code{\link{hy_agency_list}},
   \code{\link{hy_stn_op_schedule}},
   \code{\link{hy_stn_regulation}}, \code{\link{hy_version}}
 }
+\concept{HYDAT functions}

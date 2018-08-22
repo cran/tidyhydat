@@ -16,7 +16,7 @@ HYDAT
 }
 \usage{
 hy_daily_flows(station_number = NULL, hydat_path = NULL,
-  prov_terr_state_loc = NULL, start_date = "ALL", end_date = "ALL",
+  prov_terr_state_loc = NULL, start_date = NULL, end_date = NULL,
   symbol_output = "code")
 }
 \arguments{
@@ -49,7 +49,7 @@ values from the \code{hy_stations} table are returned. That is a large tibble fo
 \examples{
 \dontrun{
 #download_hydat()
-hy_daily_flows(station_number = c("02JE013","08MF005"), 
+hy_daily_flows(station_number = c("08MF005"), 
   start_date = "1996-01-01", end_date = "2000-01-01")
 
 hy_daily_flows(prov_terr_state_loc = "PE")
@@ -77,3 +77,4 @@ Other HYDAT functions: \code{\link{hy_agency_list}},
   \code{\link{hy_stn_op_schedule}},
   \code{\link{hy_stn_regulation}}, \code{\link{hy_version}}
 }
+\concept{HYDAT functions}

@@ -16,7 +16,7 @@ HYDAT
 }
 \usage{
 hy_daily_levels(station_number = NULL, hydat_path = NULL,
-  prov_terr_state_loc = NULL, start_date = "ALL", end_date = "ALL",
+  prov_terr_state_loc = NULL, start_date = NULL, end_date = NULL,
   symbol_output = "code")
 }
 \arguments{
@@ -76,3 +76,4 @@ Other HYDAT functions: \code{\link{hy_agency_list}},
   \code{\link{hy_stn_op_schedule}},
   \code{\link{hy_stn_regulation}}, \code{\link{hy_version}}
 }
+\concept{HYDAT functions}

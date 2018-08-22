@@ -13,8 +13,9 @@
 
 #' All Canadian stations 
 #' 
-#' A shorthand to avoid having always call \code{hy_stations} or \code{realtime_stations}. Only up to date as of 2017-10-26. Populated by both 
-#' realtime and historical data from HYDAT. 
+#' A shorthand to avoid having always call \code{hy_stations} or \code{realtime_stations}. 
+#' Populated by both realtime and historical data from HYDAT. 
+#' 
 #' 
 #' @format A tibble with 5 variables:
 #' \describe{
@@ -26,11 +27,12 @@
 #'   real-time or near real-time}
 #'   \item{LATITUDE}{North-South Coordinates of the gauging station in decimal degrees}
 #'   \item{LONGITUDE}{East-West Coordinates of the gauging station in decimal degrees}
+#'   \item{station_tz}{Timezone of station calculated using the lutz package based on LAT/LONG of stations}
+#'   \item{standard_offset}{Offset from UTC of local standard time}
 #' }
 #'
 #' @source HYDAT, Meteorological Service of Canada datamart
 "allstations"
-
 
 #' DATA SYMBOLS look-up table
 #'

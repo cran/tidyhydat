@@ -36,7 +36,7 @@
 #' @examples
 #' \dontrun{
 #' #download_hydat()
-#' hy_daily_flows(station_number = c("02JE013","08MF005"), 
+#' hy_daily_flows(station_number = c("08MF005"), 
 #'   start_date = "1996-01-01", end_date = "2000-01-01")
 #'
 #' hy_daily_flows(prov_terr_state_loc = "PE")
@@ -50,35 +50,13 @@
 
 hy_daily_flows <- function(station_number = NULL,
                       hydat_path = NULL, 
-                      prov_terr_state_loc = NULL, start_date = "ALL", end_date = "ALL",
+                      prov_terr_state_loc = NULL, 
+                      start_date = NULL, 
+                      end_date = NULL,
                       symbol_output = "code") {
   
-  
-  if (start_date == "ALL" & end_date == "ALL") {
-    message("No start and end dates specified. All dates available will be returned.")
-  } else {
-    ## When we want date contraints we need to break apart the dates because SQL has no native date format
-    ## Start
-    start_year <- lubridate::year(start_date)
-    start_month <- lubridate::month(start_date)
-    start_day <- lubridate::day(start_date)
-    
-    ## End
-    end_year <- lubridate::year(end_date)
-    end_month <- lubridate::month(end_date)
-    end_day <- lubridate::day(end_date)
-  }
-  
-  ## Check date is in the right format
-  if (start_date != "ALL" | end_date != "ALL") {
-    if (is.na(as.Date(start_date, format = "%Y-%m-%d")) | is.na(as.Date(end_date, format = "%Y-%m-%d"))) {
-      stop("Invalid date format. Dates need to be in YYYY-MM-DD format")
-    }
-    
-    if (start_date > end_date) {
-      stop("start_date is after end_date. Try swapping values.")
-    }
-  }
+  ## Determine which dates should be queried
+  dates_null <- date_check(start_date, end_date)
   
   ## Read in database
   hydat_con <- hy_src(hydat_path)
@@ -101,16 +79,17 @@ hy_daily_flows <- function(station_number = NULL,
   dly_flows <- dplyr::filter(dly_flows, !!sym_STATION_NUMBER %in% stns)
   
   ## Do the initial subset to take advantage of dbplyr only issuing sql query when it has too
-  if (start_date != "ALL" | end_date != "ALL") {
-    dly_flows <- dplyr::filter(dly_flows, !!sym_YEAR >= start_year & !!sym_YEAR <= end_year)
-  }
+  
+  ## by year
+  if (!dates_null[["start_is_null"]]) dly_flows <- dplyr::filter(dly_flows, !!sym_YEAR >= lubridate::year(start_date))
+  if (!dates_null[["end_is_null"]]) dly_flows <- dplyr::filter(dly_flows, !!sym_YEAR <= lubridate::year(end_date))
+  
   
   dly_flows <- dplyr::select(dly_flows, .data$STATION_NUMBER, .data$YEAR, .data$MONTH, 
                              .data$NO_DAYS, dplyr::contains("FLOW"))
   dly_flows <- dplyr::collect(dly_flows)
   
-  if(is.data.frame(dly_flows) && nrow(dly_flows)==0)
-    {stop("No flow data for this station in HYDAT")}
+  if(is.data.frame(dly_flows) && nrow(dly_flows)==0) stop("No flow data for this station in HYDAT")
   
   dly_flows <- tidyr::gather(dly_flows, !!sym_variable, !!sym_temp, -(.data$STATION_NUMBER:.data$NO_DAYS))
   dly_flows <- dplyr::mutate(dly_flows, DAY = as.numeric(gsub("FLOW|FLOW_SYMBOL", "", .data$variable)))
@@ -124,10 +103,8 @@ hy_daily_flows <- function(station_number = NULL,
   dly_flows <- dplyr::mutate(dly_flows, Date = lubridate::ymd(paste0(.data$YEAR, "-", .data$MONTH, "-", .data$DAY)))
   
   ## Then when a date column exist fine tune the subset
-  if (start_date != "ALL" | end_date != "ALL") {
-    dly_flows <- dplyr::filter(dly_flows, !!sym_Date >= start_date &
-                                 !!sym_Date <= end_date)
-  }
+  if (!dates_null[["start_is_null"]]) dly_flows <- dplyr::filter(dly_flows, !!sym_Date >= start_date)
+  if (!dates_null[["end_is_null"]]) dly_flows <- dplyr::filter(dly_flows, !!sym_Date <= end_date)
   
   dly_flows <- dplyr::left_join(dly_flows, tidyhydat::hy_data_symbols, by = c("FLOW_SYMBOL" = "SYMBOL_ID"))
   dly_flows <- dplyr::mutate(dly_flows, Parameter = "Flow")

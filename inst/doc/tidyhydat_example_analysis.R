@@ -17,7 +17,7 @@ library(lubridate)
 ## ---- eval= FALSE, warning=FALSE, message=FALSE--------------------------
 #  longest_record_data <- hy_stn_data_range() %>%
 #    filter(DATA_TYPE == "Q", RECORD_LENGTH == max(RECORD_LENGTH)) %>%
-#    pull(STATION_NUMBER) %>%
+#    pull_station_number() %>%
 #    hy_daily_flows()
 
 ## ----data_range----------------------------------------------------------
@@ -30,12 +30,12 @@ hy_stn_data_range() %>%
 ## ----pull----------------------------------------------------------------
 hy_stn_data_range() %>%
   filter(DATA_TYPE == "Q", RECORD_LENGTH == max(RECORD_LENGTH)) %>%
-  pull(STATION_NUMBER)
+  pull_station_number()
 
 ## ---- full1--------------------------------------------------------------
 longest_record_data <- hy_stn_data_range() %>%
   filter(DATA_TYPE == "Q", RECORD_LENGTH == max(RECORD_LENGTH)) %>%
-  pull(STATION_NUMBER) %>%
+  pull_station_number() %>%
   hy_daily_flows()
 
 ## ----hy_stns-------------------------------------------------------------
@@ -86,11 +86,11 @@ nunavut_stn_flows <- hy_stations() %>%
   filter(REAL_TIME == TRUE) %>%
   filter(RHBN == TRUE) %>%
   filter(PROV_TERR_STATE_LOC == "NU") %>%
-  pull(STATION_NUMBER) %>%
+  pull_station_number() %>%
   hy_stn_data_range() %>%
   filter(DATA_TYPE == "Q") %>% 
   filter(RECORD_LENGTH == max(RECORD_LENGTH)) %>%
-  pull(STATION_NUMBER) %>%
+  pull_station_number() %>%
   hy_daily_flows()
 
 ## ------------------------------------------------------------------------

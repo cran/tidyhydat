@@ -25,10 +25,10 @@
 #' @format A tibble with 8 variables:
 #' \describe{
 #'   \item{STATION_NUMBER}{Unique 7 digit Water Survey of Canada station number}
-#'   \item{YEAR}{Year of record.}
-#'   \item{MONTH}{Numeric month value}
-#'   \item{FULL_MONTH}{Logical value is there is full record from MONTH}
-#'   \item{NO_DAYS}{Number of days in that month}
+#'   \item{Year}{Year of record.}
+#'   \item{Month}{Numeric month value}
+#'   \item{Full_Month}{Logical value is there is full record from Month}
+#'   \item{No_days}{Number of days in that month}
 #'   \item{Sum_stat}{Summary statistic being used.} 
 #'   \item{Value}{Value of the measurement in tonnes.}
 #'   \item{Date_occurred}{Observation date. Formatted as a Date class. MEAN is a annual summary 
@@ -48,7 +48,12 @@
 
 hy_sed_monthly_loads <- function(station_number = NULL,
                               hydat_path = NULL, 
-                              prov_terr_state_loc = NULL, start_date ="ALL", end_date = "ALL") {
+                              prov_terr_state_loc = NULL, 
+                              start_date =NULL, 
+                              end_date = NULL) {
+  
+  ## Determine which dates should be queried
+  dates_null <- date_check(start_date, end_date)
   
   ## Read in database
   hydat_con <- hy_src(hydat_path)
@@ -56,41 +61,12 @@ hy_sed_monthly_loads <- function(station_number = NULL,
     on.exit(hy_src_disconnect(hydat_con))
   }
   
-  if (!is.null(station_number) && station_number == "ALL") {
-    stop("Deprecated behaviour.Omit the station_number = \"ALL\" argument. See ?hy_sed_monthly_loads for examples.")
-  }
-  
-  if (start_date == "ALL" & end_date == "ALL") {
-    message("No start and end dates specified. All dates available will be returned.")
-  } else {
-    ## When we want date contraints we need to break apart the dates because SQL has no native date format
-    ## Start
-    start_year <- lubridate::year(start_date)
-    start_month <- lubridate::month(start_date)
-    start_day <- lubridate::day(start_date)
-    
-    ## End
-    end_year <- lubridate::year(end_date)
-    end_month <- lubridate::month(end_date)
-    end_day <- lubridate::day(end_date)
-  }
-  
-  ## Check date is in the right format
-  if (start_date != "ALL" | end_date != "ALL") {
-    if (is.na(as.Date(start_date, format = "%Y-%m-%d")) | is.na(as.Date(end_date, format = "%Y-%m-%d"))) {
-      stop("Invalid date format. Dates need to be in YYYY-MM-DD format")
-    }
-    
-    if (start_date > end_date) {
-      stop("start_date is after end_date. Try swapping values.")
-    }
-  }
   
   ## Determine which stations we are querying
   stns <- station_choice(hydat_con, station_number, prov_terr_state_loc)
   
   ## Creating rlang symbols
-  sym_YEAR <- sym("YEAR")
+  sym_YEAR <- sym("Year")
   sym_STATION_NUMBER <- sym("STATION_NUMBER")
   sym_variable <- sym("variable")
   sym_temp <- sym("temp")
@@ -101,13 +77,10 @@ hy_sed_monthly_loads <- function(station_number = NULL,
   sed_monthly_loads <- dplyr::filter(sed_monthly_loads, !!sym_STATION_NUMBER %in% stns)
   
   ## Do the initial subset to take advantage of dbplyr only issuing sql query when it has too
-  if (start_date != "ALL" | end_date != "ALL") {
-    sed_monthly_loads <- dplyr::filter(sed_monthly_loads, !!sym_YEAR >= start_year &
-                                         !!sym_YEAR <= end_year)
-    
-    #sed_monthly_loads <- dplyr::filter(sed_monthly_loads, MONTH >= start_month &
-    #                             MONTH <= end_month)
-  }
+  
+  ## by year
+  if (!dates_null[["start_is_null"]]) sed_monthly_loads <- dplyr::filter(sed_monthly_loads, !!sym_YEAR >= lubridate::year(start_date))
+  if (!dates_null[["end_is_null"]]) sed_monthly_loads <- dplyr::filter(sed_monthly_loads, !!sym_YEAR <= lubridate::year(end_date))
   
   sed_monthly_loads <- dplyr::select(sed_monthly_loads, .data$STATION_NUMBER:.data$MAX)
   sed_monthly_loads <- dplyr::collect(sed_monthly_loads)
@@ -116,22 +89,29 @@ hy_sed_monthly_loads <- function(station_number = NULL,
   {stop("This station is not present in HYDAT")}
   
   ## Need to rename columns for gather
-  colnames(sed_monthly_loads) <- c("STATION_NUMBER","YEAR","MONTH", "FULL_MONTH", "NO_DAYS","MEAN_Value",
+  colnames(sed_monthly_loads) <- c("STATION_NUMBER","Year","Month", "Full_Month", "No_days","MEAN_Value",
                            "TOTAL_Value", "MIN_DAY","MIN_Value", "MAX_DAY","MAX_Value")
   
   
 
-  sed_monthly_loads <- tidyr::gather(sed_monthly_loads, !!sym_variable, !!sym_temp, -(.data$STATION_NUMBER:.data$NO_DAYS))
+  sed_monthly_loads <- tidyr::gather(sed_monthly_loads, !!sym_variable, !!sym_temp, -(.data$STATION_NUMBER:.data$No_days))
   sed_monthly_loads <- tidyr::separate(sed_monthly_loads, !!sym_variable, into = c("Sum_stat","temp2"), sep = "_")
 
   sed_monthly_loads <- tidyr::spread(sed_monthly_loads, !!sym_temp2, !!sym_temp)
 
   ## convert into R date for date of occurence.
-  sed_monthly_loads <- dplyr::mutate(sed_monthly_loads, Date_occurred = lubridate::ymd(
-    paste0(.data$YEAR, "-", .data$MONTH, "-", .data$DAY), quiet = TRUE))
+  sed_monthly_loads <- dplyr::mutate(sed_monthly_loads, Date_occurred = paste0(.data$Year, "-", .data$Month, "-", .data$DAY))
+  
+  ## Check if DAY is NA and if so give it an NA value so the date parse correctly.
+  sed_monthly_loads <- dplyr::mutate(sed_monthly_loads, Date_occurred = ifelse(is.na(.data$DAY), NA, .data$Date_occurred))
+  sed_monthly_loads <- dplyr::mutate(sed_monthly_loads, Date_occurred = lubridate::ymd(.data$Date_occurred, quiet = TRUE))
+  
+  ## Then when a date column exist fine tune the subset
+  if (!dates_null[["start_is_null"]]) sed_monthly_loads <- dplyr::filter(sed_monthly_loads, .data$Date_occurred >= start_date)
+  if (!dates_null[["end_is_null"]]) sed_monthly_loads <- dplyr::filter(sed_monthly_loads, .data$Date_occurred <= end_date)
 
   sed_monthly_loads <- dplyr::select(sed_monthly_loads, -.data$DAY)
-  sed_monthly_loads <- dplyr::mutate(sed_monthly_loads, FULL_MONTH = .data$FULL_MONTH == 1)
+  sed_monthly_loads <- dplyr::mutate(sed_monthly_loads, Full_Month = .data$Full_Month == 1)
 
   ## What stations were missed?
   differ_msg(unique(stns), unique(sed_monthly_loads$STATION_NUMBER))

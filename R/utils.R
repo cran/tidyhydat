@@ -61,6 +61,38 @@ station_choice <- function(hydat_con, station_number, prov_terr_state_loc) {
 
 }
 
+
+## Deal with date choice and formatting
+#' @noRd
+#' 
+date_check <- function(start_date = NULL, end_date = NULL){
+  
+  start_is_null <- is.null(start_date) 
+  end_is_null <- is.null(end_date)
+  
+  
+  if (start_is_null & end_is_null) {
+    message("No start and end dates specified. All dates available will be returned.")
+    
+  }
+  
+  ## Check date is in the right format TODO
+  if (!is.null(start_date)) {
+    if(!grepl('[0-9]{4}-[0-1][0-9]-[0-3][0-9]', start_date)) stop("Invalid date format. start_date need to be in YYYY-MM-DD format", call. = FALSE)
+  }
+  
+  if (!is.null(end_date)) {
+    if(!grepl('[0-9]{4}-[0-1][0-9]-[0-3][0-9]', end_date)) stop("Invalid date format. end_date need to be in YYYY-MM-DD format", call. = FALSE)
+  }
+  
+  if(!is.null(start_date) & !is.null(end_date)){
+    if (lubridate::ymd(end_date) < lubridate::ymd(start_date)) stop("start_date is after end_date. Try swapping values.", call. = FALSE)
+  }
+
+  
+  invisible(list(start_is_null = start_is_null, end_is_null = end_is_null))
+}
+
 #' @importFrom dplyr %>%
 #' @export
 dplyr::`%>%`
@@ -144,5 +176,51 @@ ask <- function(...) {
     cat(crayon::green(paste0(...,"\n", collapse = "")))
     cli::cat_rule(col = "green")
     utils::menu(choices) == which(choices == "Yes")
+}
+
+
+# Catch network timeout error generated
+# when dealing with proxy-related connection
+# issues and fail with an informative error
+# message on where to download HYDAT. 
+#' @noRd
+network_check <- function(url){
+  tryCatch(httr::GET(url),
+           error = function(e){
+             if(grepl("Timeout was reached:", e$message))
+               stop(paste0("Could not connect to HYDAT source. Check your connection settings.
+            Try downloading HYDAT_sqlite3 from this url: 
+            [http://collaboration.cmc.ec.gc.ca/cmc/hydrometrics/www/]
+            and unzipping the saved file to this directory: ", hy_dir()),
+                    call. = FALSE)
+               }
+  )}
+
+
+#' Convenience function to pull station number from tidyhydat functions
+#' 
+#' This function is a thin wrapper of \code{dplyr::pull} to avoid having to always type
+#' dplyr::pull(STATION_NUMBER). Instead we can now take advantage of autocomplete. This can be used 
+#' with \code{realtime_} and \code{hy_} functions.
+#' 
+#' @param .data A table of data
+#' 
+#' @return A vector of station_numbers
+#' 
+#' @export
+#' 
+#' @examples
+#' \dontrun{
+#' 
+#' hy_stations(prov_terr_state_loc = "PE") %>%
+#'  pull_station_number() %>%
+#'  hy_annual_instant_peaks()
+#' }
+#' 
+pull_station_number <- function(.data){
+  
+  if(!("STATION_NUMBER" %in% colnames(.data))) stop("No STATION_NUMBER column present", call. = FALSE)
+  
+  dplyr::pull(.data, !!sym("STATION_NUMBER"))
 }
 
