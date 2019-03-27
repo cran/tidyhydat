@@ -10,6 +10,85 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
+#' plot realtime object
+#' 
+#' 
+#' @describeIn plot plot.realtime
+#'
+#' @method plot realtime
+#'
+#' @examples 
+#' \dontrun{
+#' # One station
+#' fraser_realtime <- realtime_dd("08MF005")
+#' plot(fraser_realtime)
+#' }
+#' 
+#' @export
+
+plot.realtime <- function(x = NULL, Parameter = c("Flow","Level"), ...){
+  #browser()
+  rldf = x
+  
+  Parameter <- match.arg(Parameter)
+  
+  if(length(unique(rldf$STATION_NUMBER)) > 1L) {
+    stop("realtime plot methods only work with objects that contain one station", call. = FALSE)
+  }
+
+  if(is.null(rldf)) stop("Station(s) not present in the datamart")
+  
+  ## Is there any NA's in the flow data?
+  if(any(is.na(rldf[rldf$Parameter == "Flow",]$Value)) & Parameter == "Flow"){
+    rldf <- rldf[rldf$Parameter == "Level",]
+    message(paste0(rldf$STATION_NUMBER," is lake level station. Defaulting Parameter = 'Level'"))
+  } else{
+    rldf <- rldf[rldf$Parameter == Parameter,]
+  }
+  
+  
+  
+  
+  ## Join with meta data to get station name
+  rldf <- dplyr::left_join(rldf, tidyhydat::allstations, by = c("STATION_NUMBER","PROV_TERR_STATE_LOC"))
+  
+  rldf$STATION <- paste(rldf$STATION_NAME, rldf$STATION_NUMBER, sep = " - ")
+  
+  rldf$STATION <- factor(rldf$STATION)
+  
+  graphics::par(mar = c(4, 5, 2, 1), 
+                mgp = c(3.1, 0.4, 0), 
+                las = 1, 
+                tck = -.01, 
+                xaxs = "i", yaxs = "i") 
+  
+  graphics::plot(Value ~ Date,
+                 data = rldf,
+                 xlab = "Date", 
+                 ylab = eval(parse(text = label_helper(unique(rldf$Parameter)))),
+                 axes = FALSE,
+                 col = "#82D6FF96",
+                 #ylim = c(min(rldf$Value, na.rm = TRUE), max(rldf$Value, na.rm = TRUE) + 2),
+                 pch = 20, 
+                 cex = 0.75,
+                 frame.plot = TRUE,
+                 ...)
+  
+  at_y = utils::tail(utils::head(pretty(rldf$Value), -1), -1)
+  graphics::mtext(side = 2, text = at_y, at = at_y, 
+        col = "grey20", line = 1, cex = 1)
+  
+  at_x = utils::tail(utils::head(pretty(rldf$Date), -1), -1)
+  graphics::mtext(side = 1, text = format(at_x, "%b-%d"), at = at_x, col = "grey20", line = 1, cex = 1)
+  
+  graphics::title(main=paste0(unique(rldf$STATION)), cex.main = 1.1)
+  
+  
+  
+}
+
+
+
 #' Convenience function to plot realtime data
 #' 
 #' This is an easy way to visualize a single station using base R graphics. 

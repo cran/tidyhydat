@@ -1,3 +1,18 @@
+tidyhydat 0.4.0
+=========================
+
+### IMPROVEMENTS
+* All functions now return either "hy" or "realtime" class with associated print and plot methods (#119)
+* prov_terr_state_loc now accepts a "CA" value to specify only stations located in Canada (#112)
+* functions that access internet resources now fail with an informative error message (#116)
+* tests that require internet resources are skipped when internet is down 
+* Add small join example to calculate runoff to introduction vignette (#120)
+
+### BUG FIXES
+* `pull_station_number` now only returns unique values (#109)
+* Adding a offset column that reflects OlsonNames() and is thus DST independent (#110)
+* Caught all `R_CHECK_LENGTH_1_CONDITION` instances
+
 tidyhydat 0.3.5
 =========================
 ### IMPROVEMENTS
@@ -19,7 +34,7 @@ tidyhydat 0.3.4
 =========================
 ### IMPROVEMENT
 * Added rlang as a dependency and applied tidyeval idiom to more safety control variable environments
-* 15% speed improvement in `realtime_dd` by elimating loop (#91)
+* 15% speed improvement in `realtime_dd` by eliminating loop (#91)
 * 40% speed improvement when querying full provinces (#89)
 * reorganized file naming so that helper functions are placed in utils-* files
 

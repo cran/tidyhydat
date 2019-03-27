@@ -53,8 +53,8 @@ To install the development version of the `tidyhydat` package, you need
 to install the `remotes` package then the `tidyhydat` package
 
 ``` r
-if(!requireNamespace("devtools")) install.packages("devtools")
-devtools::install_github("ropensci/tidyhydat")
+if(!requireNamespace("remotes")) install.packages("remotes")
+remotes::install_github("ropensci/tidyhydat")
 ```
 
 ## Usage
@@ -105,9 +105,15 @@ supply this directly to the `station_number` argument:
 
 ``` r
 hy_daily_flows(station_number = "08LA001")
-#> No start and end dates specified. All dates available will be returned.
-#> All station successfully retrieved
-#> # A tibble: 29,159 x 5
+#>   Queried from version of HYDAT released on 2019-01-17
+#>    Observations:                      29,890
+#>    Measurement flags:                 5,922
+#>    Parameter(s):                      Flow
+#>    Date range:                        1914-01-01 to 2017-12-31 
+#>    Station(s) returned:               1
+#>    Stations requested but not returned: 
+#>     All stations returned.
+#> # A tibble: 29,890 x 5
 #>    STATION_NUMBER Date       Parameter Value Symbol
 #>    <chr>          <date>     <chr>     <dbl> <chr> 
 #>  1 08LA001        1914-01-01 Flow        144 <NA>  
@@ -120,7 +126,7 @@ hy_daily_flows(station_number = "08LA001")
 #>  8 08LA001        1914-01-08 Flow        140 <NA>  
 #>  9 08LA001        1914-01-09 Flow        140 <NA>  
 #> 10 08LA001        1914-01-10 Flow        140 <NA>  
-#> # ... with 29,149 more rows
+#> # ... with 29,880 more rows
 ```
 
 Another method is to use `hy_stations()` to generate your vector which
@@ -136,13 +142,21 @@ PEI_stns <- hy_stations() %>%
   filter(HYD_STATUS == "ACTIVE") %>%
   filter(PROV_TERR_STATE_LOC == "PE") %>%
   pull_station_number()
-#> All station successfully retrieved
 
 PEI_stns
-#> [1] "01CA003" "01CB002" "01CB004" "01CC002" "01CC005" "01CC010" "01CD005"
+#> [1] "01CA003" "01CB002" "01CB004" "01CC002" "01CC005" "01CC010" "01CC011"
+#> [8] "01CD005"
 
 hy_daily(station_number = PEI_stns)
-#> # A tibble: 123,225 x 5
+#>   Queried from version of HYDAT released on 2019-01-17
+#>    Observations:                      132,975
+#>    Measurement flags:                 19,925
+#>    Parameter(s):                      Flow/Level/Load/Suscon
+#>    Date range:                        1961-08-01 to 2016-12-31 
+#>    Station(s) returned:               8
+#>    Stations requested but not returned: 
+#>     All stations returned.
+#> # A tibble: 132,975 x 5
 #>    STATION_NUMBER Date       Parameter Value Symbol
 #>    <chr>          <date>     <chr>     <dbl> <chr> 
 #>  1 01CA003        1961-08-01 Flow         NA <NA>  
@@ -155,7 +169,7 @@ hy_daily(station_number = PEI_stns)
 #>  8 01CA003        1961-08-08 Flow         NA <NA>  
 #>  9 01CA003        1961-08-09 Flow         NA <NA>  
 #> 10 01CA003        1961-08-10 Flow         NA <NA>  
-#> # ... with 123,215 more rows
+#> # ... with 132,965 more rows
 ```
 
 We can also merge our station choice and data extraction into one
@@ -168,10 +182,15 @@ into a single pipe:
 search_stn_name("canada") %>%
   pull_station_number() %>%
   hy_daily_flows()
-#> No start and end dates specified. All dates available will be returned.
-#> The following station(s) were not retrieved: 07DB006
-#> Check station number typos or if it is a valid station in the network
-#> # A tibble: 77,044 x 5
+#>   Queried from version of HYDAT released on 2019-01-17
+#>    Observations:                      78,507
+#>    Measurement flags:                 23,325
+#>    Parameter(s):                      Flow
+#>    Date range:                        1918-08-01 to 2017-12-31 
+#>    Station(s) returned:               7
+#>    Stations requested but not returned: 
+#>     All stations returned.
+#> # A tibble: 78,507 x 5
 #>    STATION_NUMBER Date       Parameter Value Symbol
 #>    <chr>          <date>     <chr>     <dbl> <chr> 
 #>  1 01AK001        1918-08-01 Flow      NA    <NA>  
@@ -184,7 +203,7 @@ search_stn_name("canada") %>%
 #>  8 01AK001        1918-08-08 Flow       1.78 <NA>  
 #>  9 01AK001        1918-08-09 Flow       1.5  <NA>  
 #> 10 01AK001        1918-08-10 Flow       1.78 <NA>  
-#> # ... with 77,034 more rows
+#> # ... with 78,497 more rows
 ```
 
 These example illustrate a few ways that an vector can be generated and
@@ -198,6 +217,23 @@ easily select specific stations by supplying a station of interest:
 
 ``` r
 realtime_dd(station_number = "08LG006")
+#>   Queried on: 2019-03-18 16:31:34 (UTC)
+#>   Date range: 2019-02-16 to 2019-03-18 
+#> # A tibble: 17,364 x 8
+#>    STATION_NUMBER PROV_TERR_STATE~ Date                Parameter Value
+#>    <chr>          <chr>            <dttm>              <chr>     <dbl>
+#>  1 08LG006        BC               2019-02-16 08:00:00 Flow       13.5
+#>  2 08LG006        BC               2019-02-16 08:05:00 Flow       13.5
+#>  3 08LG006        BC               2019-02-16 08:10:00 Flow       13.5
+#>  4 08LG006        BC               2019-02-16 08:15:00 Flow       13.5
+#>  5 08LG006        BC               2019-02-16 08:20:00 Flow       13.5
+#>  6 08LG006        BC               2019-02-16 08:25:00 Flow       13.6
+#>  7 08LG006        BC               2019-02-16 08:30:00 Flow       13.6
+#>  8 08LG006        BC               2019-02-16 08:35:00 Flow       13.6
+#>  9 08LG006        BC               2019-02-16 08:40:00 Flow       13.6
+#> 10 08LG006        BC               2019-02-16 08:45:00 Flow       13.6
+#> # ... with 17,354 more rows, and 3 more variables: Grade <chr>,
+#> #   Symbol <chr>, Code <chr>
 ```
 
 Another option is to provide simply the province as an argument and
@@ -207,14 +243,28 @@ download all stations from that province:
 realtime_dd(prov_terr_state_loc = "PE")
 ```
 
-A simple plotting tool is also provided to quickly visualize realtime
-data:
+### Plotting
+
+Plot methods are also provided to quickly visualize realtime data:
 
 ``` r
-realtime_plot("08LG006")
+realtime_ex <- realtime_dd(station_number = "08LG006")
+
+plot(realtime_ex)
 ```
 
 ![](tools/readme/README-unnamed-chunk-8-1.png)<!-- -->
+
+and also historical
+data:
+
+``` r
+hy_ex <- hy_daily_flows(station_number = "08LA001", start_date = "2013-01-01")
+
+plot(hy_ex)
+```
+
+![](tools/readme/README-unnamed-chunk-9-1.png)<!-- -->
 
 ## Getting Help or Reporting an Issue
 

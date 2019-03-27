@@ -8,6 +8,7 @@ knitr::opts_chunk$set(echo = TRUE,
 ## ----packages, warning=FALSE, message=FALSE, echo = TRUE-----------------
 library(tidyhydat)
 library(dplyr)
+library(ggplot2)
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  download_hydat()
@@ -51,4 +52,20 @@ search_stn_name("liard")
 
 ## ---- echo=TRUE----------------------------------------------------------
 search_stn_number("08MF")
+
+## ------------------------------------------------------------------------
+stns <- c("08NH130", "08NH005")
+runoff_data <- hy_daily_flows(station_number = stns, start_date = "2000-01-01") %>%
+  left_join(
+    hy_stations(station_number = stns) %>%
+      select(STATION_NUMBER, STATION_NAME, DRAINAGE_AREA_GROSS),
+    by = "STATION_NUMBER") %>%
+  ## conversion to mm/d
+  mutate(runoff = Value / DRAINAGE_AREA_GROSS * 86400 / 1e6 * 1e3) 
+
+
+ggplot(runoff_data) + 
+  geom_line(aes(x = Date, y = runoff, colour = STATION_NAME)) +
+  labs(y = "Mean daily runoff [mm/d]") +
+  theme_minimal()
 

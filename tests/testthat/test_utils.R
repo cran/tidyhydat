@@ -27,9 +27,9 @@ test_that("hy_version returns a dataframe and works",{
 
 test_that("downloading hydat fails behind a proxy server with informative error message",{
   skip_on_cran()
-  httr::set_config(httr::use_proxy(url = "http://google.com", port = 1234), override = TRUE)
+  httr::set_config(httr::use_proxy("64.251.21.73", 8080), override = TRUE)
   base_url <-"http://collaboration.cmc.ec.gc.ca/cmc/hydrometrics/www/"
-  expect_error(tidyhydat:::network_check(base_url), message = paste0("Error: Could not connect to HYDAT source.", 
+  expect_error(tidyhydat:::network_check(base_url), message = paste0("Error: Could not connect to HYDAT source.",
                                                           "Check your connection settings.",
                                                     "Try downloading HYDAT_sqlite3 from this url: ",
                                                     "[http://collaboration.cmc.ec.gc.ca/cmc/hydrometrics/www/]",
@@ -49,4 +49,9 @@ test_that("pull_station_number grabs station number successfully",{
   stns <- c("08NM083", "08NE102")
   pulled_stns <- hy_annual_stats(stns, hydat_path = hy_test_db()) %>% pull_station_number()
   expect_identical(stns, unique(pulled_stns))
+})
+
+test_that("pull_station_number returns only unique values",{
+  many_repeats <- hy_sed_samples(hydat_path = hy_test_db()) 
+  expect_length(pull_station_number(many_repeats), 2)
 })
