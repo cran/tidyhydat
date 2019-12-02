@@ -39,13 +39,13 @@ For more information on tidy data please see
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/ropensci/tidyhydat}
+  \item \url{https://docs.ropensci.org/tidyhydat/}
   \item Report bugs at \url{https://github.com/ropensci/tidyhydat/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: Sam Albers \email{sam.albers@gov.bc.ca} (0000-0002-9270-7884)
+\strong{Maintainer}: Sam Albers \email{sam.albers@gov.bc.ca} (\href{https://orcid.org/0000-0002-9270-7884}{ORCID})
 
 Other contributors:
 \itemize{

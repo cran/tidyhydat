@@ -1,48 +1,48 @@
-## ----setup, include=FALSE------------------------------------------------
+## ----setup, include=FALSE-----------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE, 
                       warning = FALSE, 
                       message = FALSE, 
                       eval = nzchar(Sys.getenv("hydat_eval")),
                       fig.width=7, fig.height=7)
 
-## ----pkg_load_1----------------------------------------------------------
+## ----pkg_load_1---------------------------------------------------------------
 library(tidyhydat)
 library(dplyr)
 library(ggplot2)
 library(lubridate)
 
-## ----dl_hy, eval=FALSE---------------------------------------------------
+## ----dl_hy, eval=FALSE--------------------------------------------------------
 #  download_hydat()
 
-## ---- eval= FALSE, warning=FALSE, message=FALSE--------------------------
+## ---- eval= FALSE, warning=FALSE, message=FALSE-------------------------------
 #  longest_record_data <- hy_stn_data_range() %>%
 #    filter(DATA_TYPE == "Q", RECORD_LENGTH == max(RECORD_LENGTH)) %>%
 #    pull_station_number() %>%
 #    hy_daily_flows()
 
-## ----data_range----------------------------------------------------------
+## ----data_range---------------------------------------------------------------
 hy_stn_data_range()
 
-## ----filter--------------------------------------------------------------
+## ----filter-------------------------------------------------------------------
 hy_stn_data_range() %>%
   filter(DATA_TYPE == "Q", RECORD_LENGTH == max(RECORD_LENGTH))
 
-## ----pull----------------------------------------------------------------
+## ----pull---------------------------------------------------------------------
 hy_stn_data_range() %>%
   filter(DATA_TYPE == "Q", RECORD_LENGTH == max(RECORD_LENGTH)) %>%
   pull_station_number()
 
-## ---- full1--------------------------------------------------------------
+## ---- full1-------------------------------------------------------------------
 longest_record_data <- hy_stn_data_range() %>%
   filter(DATA_TYPE == "Q", RECORD_LENGTH == max(RECORD_LENGTH)) %>%
   pull_station_number() %>%
   hy_daily_flows()
 
-## ----hy_stns-------------------------------------------------------------
+## ----hy_stns------------------------------------------------------------------
 hy_stations(station_number = unique(longest_record_data$STATION_NUMBER)) %>%
   as.list()
 
-## ----old_rec-------------------------------------------------------------
+## ----old_rec------------------------------------------------------------------
 longest_record_data %>%
   ggplot(aes(x = Date, y = Value)) +
   geom_line() +
@@ -51,7 +51,7 @@ longest_record_data %>%
   labs(y = "Discharge (m)") +
   theme_minimal()
 
-## ----old_rec_yr----------------------------------------------------------
+## ----old_rec_yr---------------------------------------------------------------
 longest_record_data %>%
   mutate(dayofyear = yday(Date), Year = year(Date)) %>%
   mutate(dayofyear_formatted = as.Date(dayofyear - 1, origin = "2016-01-01")) %>% ## leap year as placeholder
@@ -61,7 +61,7 @@ longest_record_data %>%
   labs(y = "Discharge (m)") +
   theme_minimal()
 
-## ----tile_plt------------------------------------------------------------
+## ----tile_plt-----------------------------------------------------------------
 longest_record_data %>%
   mutate(dayofyear = yday(Date), Year = year(Date)) %>%
   mutate(dayofyear_formatted = as.Date(dayofyear - 1, origin = "2016-01-01")) %>% 
@@ -74,13 +74,13 @@ longest_record_data %>%
   theme_minimal() +
   theme(legend.position="bottom")
 
-## ----pkg_load_2----------------------------------------------------------
+## ----pkg_load_2---------------------------------------------------------------
 library(tidyhydat)
 library(dplyr)
 library(ggplot2)
 library(lubridate)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 nunavut_stn_flows <- hy_stations() %>%
   filter(HYD_STATUS == "ACTIVE") %>%
   filter(REAL_TIME == TRUE) %>%
@@ -93,7 +93,7 @@ nunavut_stn_flows <- hy_stations() %>%
   pull_station_number() %>%
   hy_daily_flows()
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 pct_flow <- nunavut_stn_flows %>%
   mutate(dayofyear = yday(Date), Year = year(Date)) %>%
   filter(dayofyear %in% yday(seq.Date(from = (Sys.Date()-30), 
@@ -103,14 +103,14 @@ pct_flow <- nunavut_stn_flows %>%
   mutate(Date_no_year = dmy(paste0(day(Date),"-",month(Date),"-",year(Sys.Date())))) %>%
   ungroup()
 
-## ----realtime------------------------------------------------------------
+## ----realtime-----------------------------------------------------------------
 nunavut_realtime <- realtime_dd(unique(nunavut_stn_flows$STATION_NUMBER)) %>%
   mutate(Date_day = as.Date(Date)) %>%
   group_by(Date_day) %>%
   summarise(Value = mean(Value, na.rm = TRUE)) %>%
   ungroup()
 
-## ---- pcrtile_plt--------------------------------------------------------
+## ---- pcrtile_plt-------------------------------------------------------------
 ggplot(pct_flow, aes(x = Date_no_year, y = Value)) +
   geom_point(aes(colour = prctile)) +
   geom_line(data = nunavut_realtime, aes(x = Date_day), colour = "black") +
