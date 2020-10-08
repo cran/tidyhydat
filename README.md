@@ -3,14 +3,11 @@
 tidyhydat <img src="man/figures/tidyhydat.png" align="right" />
 ===============================================================
 
-[![dev](https://assets.bcdevexchange.org/images/badges/delivery.svg)](https://github.com/BCDevExchange/assets/blob/master/README.md)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Travis-CI Build
-Status](http://travis-ci.org/ropensci/tidyhydat.svg?branch=master)](https://travis-ci.org/ropensci/tidyhydat)
 [![Coverage
 status](https://codecov.io/gh/ropensci/tidyhydat/branch/master/graph/badge.svg)](https://codecov.io/github/ropensci/tidyhydat?branch=master)
 [![R build
-status](https://github.com/ropensci/tidyhydat/workflows/R-CMD-check/badge.svg)](https://github.com/ropensci/tidyhydat)
+status](https://github.com/ropensci/tidyhydat/workflows/R-CMD-check/badge.svg)](https://github.com/ropensci/tidyhydat/actions)
 
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/tidyhydat)](https://cran.r-project.org/package=tidyhydat)
 [![CRAN
@@ -18,7 +15,7 @@ Downloads](https://cranlogs.r-pkg.org/badges/tidyhydat?color=brightgreen)](https
 [![cran
 checks](https://cranchecks.info/badges/worst/tidyhydat)](https://cran.r-project.org/web/checks/check_results_tidyhydat.html)
 
-[![](http://badges.ropensci.org/152_status.svg)](https://github.com/ropensci/onboarding/issues/152)
+[![](http://badges.ropensci.org/152_status.svg)](https://github.com/ropensci/software-review/issues/152)
 [![DOI](http://joss.theoj.org/papers/10.21105/joss.00511/status.svg)](https://doi.org/10.21105/joss.00511)
 [![DOI](https://zenodo.org/badge/100978874.svg)](https://zenodo.org/badge/latestdoi/100978874)
 
@@ -42,7 +39,7 @@ What does `tidyhydat` do?
     station vectors
 -   Keep functions as simple as possible. For example, for daily flows,
     the `hy_daily_flows()` function queries the database, *tidies* the
-    data and returns a [tibble](http://tibble.tidyverse.org/) of daily
+    data and returns a [tibble](https://tibble.tidyverse.org/) of daily
     flows.
 
 Installation
@@ -52,17 +49,16 @@ You can install `tidyhydat` from CRAN:
 
     install.packages("tidyhydat")
 
-To install the development version of the `tidyhydat` package, you need
-to install the `remotes` package then the `tidyhydat` package:
+To install the development version of the `tidyhydat` package, you can
+install directly from the rOpenSci development server:
 
-    if(!requireNamespace("remotes")) install.packages("remotes")
-    remotes::install_github("ropensci/tidyhydat")
+    install.packages("tidyhydat", repos = "https://dev.ropensci.org")
 
 Usage
 -----
 
-A more thorough vignette can be found on the `tidyhydat` [CRAN
-page](https://cran.r-project.org/package=tidyhydat/vignettes/tidyhydat_an_introduction.html).
+More documentation on `tidyhydat` can found at the rOpenSci doc page:
+<a href="https://docs.ropensci.org/tidyhydat/" class="uri">https://docs.ropensci.org/tidyhydat/</a>
 
 When you install `tidyhydat`, several other packages will be installed
 as well. One of those packages, `dplyr`, is useful for data
@@ -97,22 +93,22 @@ the same conventions discussed above. Using `realtime_dd()` we can
 easily select specific stations by supplying a station of interest:
 
     realtime_dd(station_number = "08LG006")
-    #>   Queried on: 2019-12-02 18:59:32 (UTC)
-    #>   Date range: 2019-11-02 to 2019-12-02 
-    #> # A tibble: 17,482 x 8
+    #>   Queried on: 2020-10-06 20:15:00 (UTC)
+    #>   Date range: 2020-09-06 to 2020-10-06 
+    #> # A tibble: 17,532 x 8
     #>    STATION_NUMBER PROV_TERR_STATE~ Date                Parameter Value Grade
     #>    <chr>          <chr>            <dttm>              <chr>     <dbl> <chr>
-    #>  1 08LG006        BC               2019-11-02 08:00:00 Flow       13.6 <NA> 
-    #>  2 08LG006        BC               2019-11-02 08:05:00 Flow       13.6 <NA> 
-    #>  3 08LG006        BC               2019-11-02 08:10:00 Flow       13.6 <NA> 
-    #>  4 08LG006        BC               2019-11-02 08:15:00 Flow       13.6 <NA> 
-    #>  5 08LG006        BC               2019-11-02 08:20:00 Flow       13.6 <NA> 
-    #>  6 08LG006        BC               2019-11-02 08:25:00 Flow       13.6 <NA> 
-    #>  7 08LG006        BC               2019-11-02 08:30:00 Flow       13.6 <NA> 
-    #>  8 08LG006        BC               2019-11-02 08:35:00 Flow       13.6 <NA> 
-    #>  9 08LG006        BC               2019-11-02 08:40:00 Flow       13.6 <NA> 
-    #> 10 08LG006        BC               2019-11-02 08:45:00 Flow       13.6 <NA> 
-    #> # ... with 17,472 more rows, and 2 more variables: Symbol <chr>, Code <chr>
+    #>  1 08LG006        BC               2020-09-06 08:00:00 Flow       4.01 <NA> 
+    #>  2 08LG006        BC               2020-09-06 08:05:00 Flow       4.01 <NA> 
+    #>  3 08LG006        BC               2020-09-06 08:10:00 Flow       3.98 <NA> 
+    #>  4 08LG006        BC               2020-09-06 08:15:00 Flow       3.98 <NA> 
+    #>  5 08LG006        BC               2020-09-06 08:20:00 Flow       3.98 <NA> 
+    #>  6 08LG006        BC               2020-09-06 08:25:00 Flow       3.98 <NA> 
+    #>  7 08LG006        BC               2020-09-06 08:30:00 Flow       3.98 <NA> 
+    #>  8 08LG006        BC               2020-09-06 08:35:00 Flow       3.98 <NA> 
+    #>  9 08LG006        BC               2020-09-06 08:40:00 Flow       3.98 <NA> 
+    #> 10 08LG006        BC               2020-09-06 08:45:00 Flow       3.98 <NA> 
+    #> # ... with 17,522 more rows, and 2 more variables: Symbol <chr>, Code <chr>
 
 ### Plotting
 

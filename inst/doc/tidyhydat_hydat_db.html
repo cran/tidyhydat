@@ -1,29 +1,116 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <meta name="author" content="Dewey Dunnington" />
 
-<meta name="date" content="2019-12-02" />
+<meta name="date" content="2020-10-07" />
 
 <title>Stepping into the HYDAT Database</title>
 
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+      code.sourceCode > span { display: inline-block; line-height: 1.25; }
+  code.sourceCode > span { color: inherit; text-decoration: inherit; }
+  code.sourceCode > span:empty { height: 1.2em; }
+  .sourceCode { overflow: visible; }
+  code.sourceCode { white-space: pre; position: relative; }
+  div.sourceCode { margin: 1em 0; }
+  pre.sourceCode { margin: 0; }
+  @media screen {
+  div.sourceCode { overflow: auto; }
+  }
+  @media print {
+  code.sourceCode { white-space: pre-wrap; }
+  code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+  }
+  pre.numberSource code
+    { counter-reset: source-line 0; }
+  pre.numberSource code > span
+    { position: relative; left: -4em; counter-increment: source-line; }
+  pre.numberSource code > span > a:first-child::before
+    { content: counter(source-line);
+      position: relative; left: -1em; text-align: right; vertical-align: baseline;
+      border: none; display: inline-block;
+      -webkit-touch-callout: none; -webkit-user-select: none;
+      -khtml-user-select: none; -moz-user-select: none;
+      -ms-user-select: none; user-select: none;
+      padding: 0 4px; width: 4em;
+      color: #aaaaaa;
+    }
+  pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+  div.sourceCode
+    {   }
+  @media screen {
+  code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+  }
+  code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+  code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+  code span.at { color: #7d9029; } /* Attribute */
+  code span.bn { color: #40a070; } /* BaseN */
+  code span.bu { } /* BuiltIn */
+  code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+  code span.ch { color: #4070a0; } /* Char */
+  code span.cn { color: #880000; } /* Constant */
+  code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+  code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+  code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+  code span.dt { color: #902000; } /* DataType */
+  code span.dv { color: #40a070; } /* DecVal */
+  code span.er { color: #ff0000; font-weight: bold; } /* Error */
+  code span.ex { } /* Extension */
+  code span.fl { color: #40a070; } /* Float */
+  code span.fu { color: #06287e; } /* Function */
+  code span.im { } /* Import */
+  code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+  code span.op { color: #666666; } /* Operator */
+  code span.ot { color: #007020; } /* Other */
+  code span.pp { color: #bc7a00; } /* Preprocessor */
+  code span.sc { color: #4070a0; } /* SpecialChar */
+  code span.ss { color: #bb6688; } /* SpecialString */
+  code span.st { color: #4070a0; } /* String */
+  code span.va { color: #19177c; } /* Variable */
+  code span.vs { color: #4070a0; } /* VerbatimString */
+  code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    </style>
 
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
@@ -33,14 +120,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -49,9 +138,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -118,9 +207,6 @@ padding-right: 2em;
 font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 font-size: 14px;
 line-height: 1.35;
-}
-#header {
-text-align: center;
 }
 #TOC {
 clear: both;
@@ -289,7 +375,8 @@ code > span.st { color: #d14; }
 code > span.co { color: #888888; font-style: italic; } 
 code > span.ot { color: #007020; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
 
@@ -304,7 +391,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Stepping into the HYDAT Database</h1>
 <h4 class="author">Dewey Dunnington</h4>
-<h4 class="date">2019-12-02</h4>
+<h4 class="date">2020-10-07</h4>
 
 
 
@@ -312,63 +399,63 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <div id="downloading-hydat" class="section level2">
 <h2>Downloading HYDAT</h2>
 <p>Before loading the HYDAT database, the latest version of the database must be downloaded using <code>hydat_download()</code>. This is a fairly lengthy operation (the download is around 1 GB) and may require several cups of coffee worth of your time.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">hydat_download</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">hydat_download</span>()</span></code></pre></div>
 </div>
 <div id="working-with-hydat-tables" class="section level2">
 <h2>Working with HYDAT tables</h2>
-<p>The HYDAT database is a SQLite database, which can be accessed in R using the <a href="http://dplyr.tidyverse.org/">dplyr</a> and <a href="http://dbplyr.tidyverse.org/">dbplyr</a> packages. This package has simplified the connection process, so all you have to do to connect to the database is use <code>hy_src()</code>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">src &lt;-<span class="st"> </span><span class="kw">hy_src</span>()</a></code></pre></div>
+<p>The HYDAT database is a SQLite database, which can be accessed in R using the <a href="https://dplyr.tidyverse.org/">dplyr</a> and <a href="https://dbplyr.tidyverse.org/">dbplyr</a> packages. This package has simplified the connection process, so all you have to do to connect to the database is use <code>hy_src()</code>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>src &lt;-<span class="st"> </span><span class="kw">hy_src</span>()</span></code></pre></div>
 <p>To list the tables, use <code>src_tbls()</code> from the <strong>dplyr</strong> package.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">src_tbls</span>(src)</a>
-<a class="sourceLine" id="cb3-2" title="2"><span class="co">#&gt;  [1] &quot;AGENCY_LIST&quot;            &quot;ANNUAL_INSTANT_PEAKS&quot;   &quot;ANNUAL_STATISTICS&quot;     </span></a>
-<a class="sourceLine" id="cb3-3" title="3"><span class="co">#&gt;  [4] &quot;CONCENTRATION_SYMBOLS&quot;  &quot;DATA_SYMBOLS&quot;           &quot;DATA_TYPES&quot;            </span></a>
-<a class="sourceLine" id="cb3-4" title="4"><span class="co">#&gt;  [7] &quot;DATUM_LIST&quot;             &quot;DLY_FLOWS&quot;              &quot;DLY_LEVELS&quot;            </span></a>
-<a class="sourceLine" id="cb3-5" title="5"><span class="co">#&gt; [10] &quot;MEASUREMENT_CODES&quot;      &quot;OPERATION_CODES&quot;        &quot;PEAK_CODES&quot;            </span></a>
-<a class="sourceLine" id="cb3-6" title="6"><span class="co">#&gt; [13] &quot;PRECISION_CODES&quot;        &quot;REGIONAL_OFFICE_LIST&quot;   &quot;SAMPLE_REMARK_CODES&quot;   </span></a>
-<a class="sourceLine" id="cb3-7" title="7"><span class="co">#&gt; [16] &quot;SED_DATA_TYPES&quot;         &quot;SED_DLY_LOADS&quot;          &quot;SED_DLY_SUSCON&quot;        </span></a>
-<a class="sourceLine" id="cb3-8" title="8"><span class="co">#&gt; [19] &quot;SED_SAMPLES&quot;            &quot;SED_SAMPLES_PSD&quot;        &quot;SED_VERTICAL_LOCATION&quot; </span></a>
-<a class="sourceLine" id="cb3-9" title="9"><span class="co">#&gt; [22] &quot;SED_VERTICAL_SYMBOLS&quot;   &quot;STATIONS&quot;               &quot;STN_DATA_COLLECTION&quot;   </span></a>
-<a class="sourceLine" id="cb3-10" title="10"><span class="co">#&gt; [25] &quot;STN_DATA_RANGE&quot;         &quot;STN_DATUM_CONVERSION&quot;   &quot;STN_DATUM_UNRELATED&quot;   </span></a>
-<a class="sourceLine" id="cb3-11" title="11"><span class="co">#&gt; [28] &quot;STN_OPERATION_SCHEDULE&quot; &quot;STN_REGULATION&quot;         &quot;STN_REMARKS&quot;           </span></a>
-<a class="sourceLine" id="cb3-12" title="12"><span class="co">#&gt; [31] &quot;STN_REMARK_CODES&quot;       &quot;STN_STATUS_CODES&quot;       &quot;VERSION&quot;</span></a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">src_tbls</span>(src)</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="co">#&gt;  [1] &quot;AGENCY_LIST&quot;            &quot;ANNUAL_INSTANT_PEAKS&quot;   &quot;ANNUAL_STATISTICS&quot;     </span></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co">#&gt;  [4] &quot;CONCENTRATION_SYMBOLS&quot;  &quot;DATA_SYMBOLS&quot;           &quot;DATA_TYPES&quot;            </span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="co">#&gt;  [7] &quot;DATUM_LIST&quot;             &quot;DLY_FLOWS&quot;              &quot;DLY_LEVELS&quot;            </span></span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="co">#&gt; [10] &quot;MEASUREMENT_CODES&quot;      &quot;OPERATION_CODES&quot;        &quot;PEAK_CODES&quot;            </span></span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="co">#&gt; [13] &quot;PRECISION_CODES&quot;        &quot;REGIONAL_OFFICE_LIST&quot;   &quot;SAMPLE_REMARK_CODES&quot;   </span></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="co">#&gt; [16] &quot;SED_DATA_TYPES&quot;         &quot;SED_DLY_LOADS&quot;          &quot;SED_DLY_SUSCON&quot;        </span></span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="co">#&gt; [19] &quot;SED_SAMPLES&quot;            &quot;SED_SAMPLES_PSD&quot;        &quot;SED_VERTICAL_LOCATION&quot; </span></span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="co">#&gt; [22] &quot;SED_VERTICAL_SYMBOLS&quot;   &quot;STATIONS&quot;               &quot;STN_DATA_COLLECTION&quot;   </span></span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="co">#&gt; [25] &quot;STN_DATA_RANGE&quot;         &quot;STN_DATUM_CONVERSION&quot;   &quot;STN_DATUM_UNRELATED&quot;   </span></span>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="co">#&gt; [28] &quot;STN_OPERATION_SCHEDULE&quot; &quot;STN_REGULATION&quot;         &quot;STN_REMARKS&quot;           </span></span>
+<span id="cb3-12"><a href="#cb3-12"></a><span class="co">#&gt; [31] &quot;STN_REMARK_CODES&quot;       &quot;STN_STATUS_CODES&quot;       &quot;VERSION&quot;</span></span></code></pre></div>
 <p>To inspect any particular table, use the <code>tbl()</code> function with the <code>src</code> and the table name.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">tbl</span>(src, <span class="st">&quot;STN_OPERATION_SCHEDULE&quot;</span>)</a>
-<a class="sourceLine" id="cb4-2" title="2"><span class="co">#&gt; # Source:   table&lt;STN_OPERATION_SCHEDULE&gt; [?? x 5]</span></a>
-<a class="sourceLine" id="cb4-3" title="3"><span class="co">#&gt; # Database: sqlite 3.29.0</span></a>
-<a class="sourceLine" id="cb4-4" title="4"><span class="co">#&gt; #   [C:\Users\salbers\AppData\Local\Temp\Rtmp6XU9Ky\Rinst49684528a52\tidyhydat\test_db\tinyhydat.sqlite3]</span></a>
-<a class="sourceLine" id="cb4-5" title="5"><span class="co">#&gt;    STATION_NUMBER DATA_TYPE  YEAR MONTH_FROM MONTH_TO</span></a>
-<a class="sourceLine" id="cb4-6" title="6"><span class="co">#&gt;    &lt;chr&gt;          &lt;chr&gt;     &lt;int&gt; &lt;chr&gt;      &lt;chr&gt;   </span></a>
-<a class="sourceLine" id="cb4-7" title="7"><span class="co">#&gt;  1 01AP003        H          1923 &lt;NA&gt;       &lt;NA&gt;    </span></a>
-<a class="sourceLine" id="cb4-8" title="8"><span class="co">#&gt;  2 01AP003        H          1924 &lt;NA&gt;       &lt;NA&gt;    </span></a>
-<a class="sourceLine" id="cb4-9" title="9"><span class="co">#&gt;  3 01AP003        H          1925 &lt;NA&gt;       &lt;NA&gt;    </span></a>
-<a class="sourceLine" id="cb4-10" title="10"><span class="co">#&gt;  4 01AP003        H          1926 &lt;NA&gt;       &lt;NA&gt;    </span></a>
-<a class="sourceLine" id="cb4-11" title="11"><span class="co">#&gt;  5 01AP003        H          1927 &lt;NA&gt;       &lt;NA&gt;    </span></a>
-<a class="sourceLine" id="cb4-12" title="12"><span class="co">#&gt;  6 01AP003        H          1928 &lt;NA&gt;       &lt;NA&gt;    </span></a>
-<a class="sourceLine" id="cb4-13" title="13"><span class="co">#&gt;  7 01AP003        H          1929 &lt;NA&gt;       &lt;NA&gt;    </span></a>
-<a class="sourceLine" id="cb4-14" title="14"><span class="co">#&gt;  8 01AP003        H          1930 &lt;NA&gt;       &lt;NA&gt;    </span></a>
-<a class="sourceLine" id="cb4-15" title="15"><span class="co">#&gt;  9 01AP003        H          1931 &lt;NA&gt;       &lt;NA&gt;    </span></a>
-<a class="sourceLine" id="cb4-16" title="16"><span class="co">#&gt; 10 01AP003        H          1932 &lt;NA&gt;       &lt;NA&gt;    </span></a>
-<a class="sourceLine" id="cb4-17" title="17"><span class="co">#&gt; # ... with more rows</span></a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">tbl</span>(src, <span class="st">&quot;STN_OPERATION_SCHEDULE&quot;</span>)</span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="co">#&gt; # Source:   table&lt;STN_OPERATION_SCHEDULE&gt; [?? x 5]</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="co">#&gt; # Database: sqlite 3.30.1</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co">#&gt; #   [C:\Users\salbers\AppData\Local\Temp\RtmpQnws3W\Rinst35081ce72d05\tidyhydat\test_db\tinyhydat.sqlite3]</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="co">#&gt;    STATION_NUMBER DATA_TYPE  YEAR MONTH_FROM MONTH_TO</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a><span class="co">#&gt;    &lt;chr&gt;          &lt;chr&gt;     &lt;int&gt; &lt;chr&gt;      &lt;chr&gt;   </span></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="co">#&gt;  1 01AP003        H          1923 &lt;NA&gt;       &lt;NA&gt;    </span></span>
+<span id="cb4-8"><a href="#cb4-8"></a><span class="co">#&gt;  2 01AP003        H          1924 &lt;NA&gt;       &lt;NA&gt;    </span></span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="co">#&gt;  3 01AP003        H          1925 &lt;NA&gt;       &lt;NA&gt;    </span></span>
+<span id="cb4-10"><a href="#cb4-10"></a><span class="co">#&gt;  4 01AP003        H          1926 &lt;NA&gt;       &lt;NA&gt;    </span></span>
+<span id="cb4-11"><a href="#cb4-11"></a><span class="co">#&gt;  5 01AP003        H          1927 &lt;NA&gt;       &lt;NA&gt;    </span></span>
+<span id="cb4-12"><a href="#cb4-12"></a><span class="co">#&gt;  6 01AP003        H          1928 &lt;NA&gt;       &lt;NA&gt;    </span></span>
+<span id="cb4-13"><a href="#cb4-13"></a><span class="co">#&gt;  7 01AP003        H          1929 &lt;NA&gt;       &lt;NA&gt;    </span></span>
+<span id="cb4-14"><a href="#cb4-14"></a><span class="co">#&gt;  8 01AP003        H          1930 &lt;NA&gt;       &lt;NA&gt;    </span></span>
+<span id="cb4-15"><a href="#cb4-15"></a><span class="co">#&gt;  9 01AP003        H          1931 &lt;NA&gt;       &lt;NA&gt;    </span></span>
+<span id="cb4-16"><a href="#cb4-16"></a><span class="co">#&gt; 10 01AP003        H          1932 &lt;NA&gt;       &lt;NA&gt;    </span></span>
+<span id="cb4-17"><a href="#cb4-17"></a><span class="co">#&gt; # ... with more rows</span></span></code></pre></div>
 <p>Working with SQL tables in dplyr is much like working with regular data frames, except no data is actually read from the database until necessary. Because some of these tables are large (particularly those containing the actual data), you will want to <code>filter()</code> the tables before you <code>collect()</code> them (the <code>collect()</code> operation loads them into memory as a <code>data.frame</code>).</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">tbl</span>(src, <span class="st">&quot;STN_OPERATION_SCHEDULE&quot;</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-2" title="2"><span class="st">  </span><span class="kw">filter</span>(STATION_NUMBER <span class="op">==</span><span class="st"> &quot;05AA008&quot;</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-3" title="3"><span class="st">  </span><span class="kw">collect</span>()</a>
-<a class="sourceLine" id="cb5-4" title="4"><span class="co">#&gt; # A tibble: 99 x 5</span></a>
-<a class="sourceLine" id="cb5-5" title="5"><span class="co">#&gt;    STATION_NUMBER DATA_TYPE  YEAR MONTH_FROM MONTH_TO</span></a>
-<a class="sourceLine" id="cb5-6" title="6"><span class="co">#&gt;    &lt;chr&gt;          &lt;chr&gt;     &lt;int&gt; &lt;chr&gt;      &lt;chr&gt;   </span></a>
-<a class="sourceLine" id="cb5-7" title="7"><span class="co">#&gt;  1 05AA008        H          2012 JAN        DEC     </span></a>
-<a class="sourceLine" id="cb5-8" title="8"><span class="co">#&gt;  2 05AA008        H          2013 JAN        DEC     </span></a>
-<a class="sourceLine" id="cb5-9" title="9"><span class="co">#&gt;  3 05AA008        H          2014 JAN        DEC     </span></a>
-<a class="sourceLine" id="cb5-10" title="10"><span class="co">#&gt;  4 05AA008        H          2015 JAN        DEC     </span></a>
-<a class="sourceLine" id="cb5-11" title="11"><span class="co">#&gt;  5 05AA008        H          2016 JAN        DEC     </span></a>
-<a class="sourceLine" id="cb5-12" title="12"><span class="co">#&gt;  6 05AA008        H          2017 JAN        DEC     </span></a>
-<a class="sourceLine" id="cb5-13" title="13"><span class="co">#&gt;  7 05AA008        H          2018 JAN        DEC     </span></a>
-<a class="sourceLine" id="cb5-14" title="14"><span class="co">#&gt;  8 05AA008        Q          1910 &lt;NA&gt;       &lt;NA&gt;    </span></a>
-<a class="sourceLine" id="cb5-15" title="15"><span class="co">#&gt;  9 05AA008        Q          1911 &lt;NA&gt;       &lt;NA&gt;    </span></a>
-<a class="sourceLine" id="cb5-16" title="16"><span class="co">#&gt; 10 05AA008        Q          1912 &lt;NA&gt;       &lt;NA&gt;    </span></a>
-<a class="sourceLine" id="cb5-17" title="17"><span class="co">#&gt; # ... with 89 more rows</span></a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">tbl</span>(src, <span class="st">&quot;STN_OPERATION_SCHEDULE&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="st">  </span><span class="kw">filter</span>(STATION_NUMBER <span class="op">==</span><span class="st"> &quot;05AA008&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="st">  </span><span class="kw">collect</span>()</span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="co">#&gt; # A tibble: 99 x 5</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="co">#&gt;    STATION_NUMBER DATA_TYPE  YEAR MONTH_FROM MONTH_TO</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a><span class="co">#&gt;    &lt;chr&gt;          &lt;chr&gt;     &lt;int&gt; &lt;chr&gt;      &lt;chr&gt;   </span></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="co">#&gt;  1 05AA008        H          2012 JAN        DEC     </span></span>
+<span id="cb5-8"><a href="#cb5-8"></a><span class="co">#&gt;  2 05AA008        H          2013 JAN        DEC     </span></span>
+<span id="cb5-9"><a href="#cb5-9"></a><span class="co">#&gt;  3 05AA008        H          2014 JAN        DEC     </span></span>
+<span id="cb5-10"><a href="#cb5-10"></a><span class="co">#&gt;  4 05AA008        H          2015 JAN        DEC     </span></span>
+<span id="cb5-11"><a href="#cb5-11"></a><span class="co">#&gt;  5 05AA008        H          2016 JAN        DEC     </span></span>
+<span id="cb5-12"><a href="#cb5-12"></a><span class="co">#&gt;  6 05AA008        H          2017 JAN        DEC     </span></span>
+<span id="cb5-13"><a href="#cb5-13"></a><span class="co">#&gt;  7 05AA008        H          2018 JAN        DEC     </span></span>
+<span id="cb5-14"><a href="#cb5-14"></a><span class="co">#&gt;  8 05AA008        Q          1910 &lt;NA&gt;       &lt;NA&gt;    </span></span>
+<span id="cb5-15"><a href="#cb5-15"></a><span class="co">#&gt;  9 05AA008        Q          1911 &lt;NA&gt;       &lt;NA&gt;    </span></span>
+<span id="cb5-16"><a href="#cb5-16"></a><span class="co">#&gt; 10 05AA008        Q          1912 &lt;NA&gt;       &lt;NA&gt;    </span></span>
+<span id="cb5-17"><a href="#cb5-17"></a><span class="co">#&gt; # ... with 89 more rows</span></span></code></pre></div>
 <p>When you are finished with the database (i.e., the end of the script), it is good practice to close the connection (you may get a loud red warning if you don’t!).</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">hy_src_disconnect</span>(src)</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">hy_src_disconnect</span>(src)</span></code></pre></div>
 </div>
 
 

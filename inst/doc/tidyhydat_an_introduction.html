@@ -1,29 +1,116 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <meta name="author" content="Sam Albers" />
 
-<meta name="date" content="2019-12-02" />
+<meta name="date" content="2020-10-07" />
 
 <title>tidyhydat: An Introduction</title>
 
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+      code.sourceCode > span { display: inline-block; line-height: 1.25; }
+  code.sourceCode > span { color: inherit; text-decoration: inherit; }
+  code.sourceCode > span:empty { height: 1.2em; }
+  .sourceCode { overflow: visible; }
+  code.sourceCode { white-space: pre; position: relative; }
+  div.sourceCode { margin: 1em 0; }
+  pre.sourceCode { margin: 0; }
+  @media screen {
+  div.sourceCode { overflow: auto; }
+  }
+  @media print {
+  code.sourceCode { white-space: pre-wrap; }
+  code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+  }
+  pre.numberSource code
+    { counter-reset: source-line 0; }
+  pre.numberSource code > span
+    { position: relative; left: -4em; counter-increment: source-line; }
+  pre.numberSource code > span > a:first-child::before
+    { content: counter(source-line);
+      position: relative; left: -1em; text-align: right; vertical-align: baseline;
+      border: none; display: inline-block;
+      -webkit-touch-callout: none; -webkit-user-select: none;
+      -khtml-user-select: none; -moz-user-select: none;
+      -ms-user-select: none; user-select: none;
+      padding: 0 4px; width: 4em;
+      color: #aaaaaa;
+    }
+  pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+  div.sourceCode
+    {   }
+  @media screen {
+  code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+  }
+  code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+  code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+  code span.at { color: #7d9029; } /* Attribute */
+  code span.bn { color: #40a070; } /* BaseN */
+  code span.bu { } /* BuiltIn */
+  code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+  code span.ch { color: #4070a0; } /* Char */
+  code span.cn { color: #880000; } /* Constant */
+  code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+  code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+  code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+  code span.dt { color: #902000; } /* DataType */
+  code span.dv { color: #40a070; } /* DecVal */
+  code span.er { color: #ff0000; font-weight: bold; } /* Error */
+  code span.ex { } /* Extension */
+  code span.fl { color: #40a070; } /* Float */
+  code span.fu { color: #06287e; } /* Function */
+  code span.im { } /* Import */
+  code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+  code span.op { color: #666666; } /* Operator */
+  code span.ot { color: #007020; } /* Other */
+  code span.pp { color: #bc7a00; } /* Preprocessor */
+  code span.sc { color: #4070a0; } /* SpecialChar */
+  code span.ss { color: #bb6688; } /* SpecialString */
+  code span.st { color: #4070a0; } /* String */
+  code span.va { color: #19177c; } /* Variable */
+  code span.vs { color: #4070a0; } /* VerbatimString */
+  code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    </style>
 
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
@@ -33,14 +120,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -49,9 +138,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -118,9 +207,6 @@ padding-right: 2em;
 font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 font-size: 14px;
 line-height: 1.35;
-}
-#header {
-text-align: center;
 }
 #TOC {
 clear: both;
@@ -289,7 +375,8 @@ code > span.st { color: #d14; }
 code > span.co { color: #888888; font-style: italic; } 
 code > span.ot { color: #007020; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
 
@@ -304,16 +391,16 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">tidyhydat: An Introduction</h1>
 <h4 class="author">Sam Albers</h4>
-<h4 class="date">2019-12-02</h4>
+<h4 class="date">2020-10-07</h4>
 
 
 
 <div id="package-loading" class="section level2">
 <h2>Package loading</h2>
 <p>In addition to tidyhydat, this vignette makes use of the <a href="https://dplyr.tidyverse.org/">dplyr</a> package for data manipulations and <a href="https://ggplot2.tidyverse.org/">ggplot2</a> for plotting.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(tidyhydat)</a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="kw">library</span>(dplyr)</a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="kw">library</span>(ggplot2)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(tidyhydat)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">library</span>(ggplot2)</span></code></pre></div>
 </div>
 <div id="tidyhydat-package" class="section level1">
 <h1><code>tidyhydat</code> package</h1>
@@ -321,15 +408,15 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <div id="hydat-download" class="section level2">
 <h2>HYDAT download</h2>
 <p>To use many of the functions in the <code>tidyhydat</code> package you will need to download a version of the HYDAT database, Environment and Climate Change Canada’s database of historical hydrometric data then tell R where to find the database. Conveniently <code>tidyhydat</code> does all this for you via:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">download_hydat</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">download_hydat</span>()</span></code></pre></div>
 <p>This downloads the most recent version of HYDAT and then saves it in a location on your computer where <code>tidyhydat</code>’s function will look for it. Do be patient though as this takes a long time! To see where HYDAT was saved you can run <code>hy_dir()</code>. Now that you have HYDAT downloaded and ready to go, you are all set to begin some hydrologic analysis.</p>
 </div>
 <div id="usage" class="section level2">
 <h2>Usage</h2>
 <p>Most functions in <code>tidyhydat</code> follow a common argument structure. We will use the <code>hy_daily_flows()</code> function for the following examples though the same approach applies to most functions in the package (See <code>ls(&quot;package:tidyhydat&quot;)</code> for a list of exported objects). Much of the functionality of <code>tidyhydat</code> originates with the choice of hydrometric stations that you are interested in. A user will often find themselves creating vectors of station numbers. There are several ways to do this.</p>
 <p>The simplest case is if you would like to extract only station. You can supply this directly to the <code>station_number</code> argument:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">hy_daily_flows</span>(<span class="dt">station_number =</span> <span class="st">&quot;08LA001&quot;</span>)</a></code></pre></div>
-<pre><code>##   Queried from version of HYDAT released on 2019-10-16
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">hy_daily_flows</span>(<span class="dt">station_number =</span> <span class="st">&quot;08LA001&quot;</span>)</span></code></pre></div>
+<pre><code>##   Queried from version of HYDAT released on 2020-07-15
 ##    Observations:                      29,890
 ##    Measurement flags:                 5,922
 ##    Parameter(s):                      Flow
@@ -352,24 +439,24 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 ## 10 08LA001        1914-01-10 Flow        140 &lt;NA&gt;  
 ## # ... with 29,880 more rows</code></pre>
 <p>Another method is to use <code>hy_stations()</code> to generate your vector which is then given the <code>station_number</code> argument. For example, we could take a subset for only those active stations within Prince Edward Island (Province code:PE) and then create vector for <code>hy_daily_flows()</code>:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">PEI_stns &lt;-<span class="st"> </span><span class="kw">hy_stations</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-2" title="2"><span class="st">  </span><span class="kw">filter</span>(HYD_STATUS <span class="op">==</span><span class="st"> &quot;ACTIVE&quot;</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-3" title="3"><span class="st">  </span><span class="kw">filter</span>(PROV_TERR_STATE_LOC <span class="op">==</span><span class="st"> &quot;PE&quot;</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-4" title="4"><span class="st">  </span><span class="kw">pull_station_number</span>()</a>
-<a class="sourceLine" id="cb5-5" title="5"></a>
-<a class="sourceLine" id="cb5-6" title="6">PEI_stns</a></code></pre></div>
-<pre><code>## [1] &quot;01CA003&quot; &quot;01CB002&quot; &quot;01CB004&quot; &quot;01CC002&quot; &quot;01CC005&quot; &quot;01CC010&quot; &quot;01CC011&quot;
-## [8] &quot;01CD005&quot;</code></pre>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">hy_daily_flows</span>(<span class="dt">station_number =</span> PEI_stns)</a></code></pre></div>
-<pre><code>##   Queried from version of HYDAT released on 2019-10-16
-##    Observations:                      106,357
-##    Measurement flags:                 18,928
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>PEI_stns &lt;-<span class="st"> </span><span class="kw">hy_stations</span>() <span class="op">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="st">  </span><span class="kw">filter</span>(HYD_STATUS <span class="op">==</span><span class="st"> &quot;ACTIVE&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="st">  </span><span class="kw">filter</span>(PROV_TERR_STATE_LOC <span class="op">==</span><span class="st"> &quot;PE&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="st">  </span><span class="kw">pull_station_number</span>()</span>
+<span id="cb5-5"><a href="#cb5-5"></a></span>
+<span id="cb5-6"><a href="#cb5-6"></a>PEI_stns</span></code></pre></div>
+<pre><code>## [1] &quot;01CA003&quot; &quot;01CB002&quot; &quot;01CB004&quot; &quot;01CB018&quot; &quot;01CC002&quot; &quot;01CC005&quot; &quot;01CC010&quot;
+## [8] &quot;01CC011&quot; &quot;01CD005&quot;</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">hy_daily_flows</span>(<span class="dt">station_number =</span> PEI_stns)</span></code></pre></div>
+<pre><code>##   Queried from version of HYDAT released on 2020-07-15
+##    Observations:                      109,856
+##    Measurement flags:                 19,667
 ##    Parameter(s):                      Flow
-##    Date range:                        1961-08-01 to 2017-12-31 
-##    Station(s) returned:               8
+##    Date range:                        1961-08-01 to 2018-12-31 
+##    Station(s) returned:               9
 ##    Stations requested but not returned: 
 ##     All stations returned.
-## # A tibble: 106,357 x 5
+## # A tibble: 109,856 x 5
 ##    STATION_NUMBER Date       Parameter Value Symbol
 ##    &lt;chr&gt;          &lt;date&gt;     &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt; 
 ##  1 01CA003        1961-08-01 Flow         NA &lt;NA&gt;  
@@ -382,20 +469,20 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 ##  8 01CB002        1961-08-04 Flow         NA &lt;NA&gt;  
 ##  9 01CA003        1961-08-05 Flow         NA &lt;NA&gt;  
 ## 10 01CB002        1961-08-05 Flow         NA &lt;NA&gt;  
-## # ... with 106,347 more rows</code></pre>
+## # ... with 109,846 more rows</code></pre>
 <p>We can also merge our station choice and data extraction into one unified pipe which accomplishes a single goal. For example if for some reason we wanted all the stations in Canada that had the name “Canada” in them we unify that selection and data extraction process into a single pipe:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw">search_stn_name</span>(<span class="st">&quot;canada&quot;</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-2" title="2"><span class="st">  </span><span class="kw">pull_station_number</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb9-3" title="3"><span class="st">  </span><span class="kw">hy_daily_flows</span>()</a></code></pre></div>
-<pre><code>##   Queried from version of HYDAT released on 2019-10-16
-##    Observations:                      81,915
-##    Measurement flags:                 24,622
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw">search_stn_name</span>(<span class="st">&quot;canada&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="st">  </span><span class="kw">pull_station_number</span>() <span class="op">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3"></a><span class="st">  </span><span class="kw">hy_daily_flows</span>()</span></code></pre></div>
+<pre><code>##   Queried from version of HYDAT released on 2020-07-15
+##    Observations:                      83,862
+##    Measurement flags:                 25,300
 ##    Parameter(s):                      Flow
-##    Date range:                        1918-08-01 to 2019-05-31 
+##    Date range:                        1918-08-01 to 2020-05-31 
 ##    Station(s) returned:               7
 ##    Stations requested but not returned: 
 ##     All stations returned.
-## # A tibble: 81,915 x 5
+## # A tibble: 83,862 x 5
 ##    STATION_NUMBER Date       Parameter Value Symbol
 ##    &lt;chr&gt;          &lt;date&gt;     &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt; 
 ##  1 01AK001        1918-08-01 Flow      NA    &lt;NA&gt;  
@@ -408,10 +495,10 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 ##  8 01AK001        1918-08-08 Flow       1.78 &lt;NA&gt;  
 ##  9 01AK001        1918-08-09 Flow       1.5  &lt;NA&gt;  
 ## 10 01AK001        1918-08-10 Flow       1.78 &lt;NA&gt;  
-## # ... with 81,905 more rows</code></pre>
+## # ... with 83,852 more rows</code></pre>
 <p>We saw above that if we were only interested in a subset of dates we could use the <code>start_date</code> and <code>end_date</code> arguments. A date must be supplied to both these arguments in the form of YYYY-MM-DD. If you were interested in all daily flow data from station number “08LA001” for 1981, you would specify all days in 1981 :</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="kw">hy_daily_flows</span>(<span class="dt">station_number =</span> <span class="st">&quot;08LA001&quot;</span>, </a>
-<a class="sourceLine" id="cb11-2" title="2">               <span class="dt">start_date =</span> <span class="st">&quot;1981-01-01&quot;</span>, <span class="dt">end_date =</span> <span class="st">&quot;1981-12-31&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="kw">hy_daily_flows</span>(<span class="dt">station_number =</span> <span class="st">&quot;08LA001&quot;</span>, </span>
+<span id="cb11-2"><a href="#cb11-2"></a>               <span class="dt">start_date =</span> <span class="st">&quot;1981-01-01&quot;</span>, <span class="dt">end_date =</span> <span class="st">&quot;1981-12-31&quot;</span>)</span></code></pre></div>
 <p>This generally outlines the usage of the HYDAT functions within <code>tidyhydat</code>.</p>
 </div>
 <div id="real-time-functions" class="section level2">
@@ -422,22 +509,22 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <li><code>realtime_dd()</code></li>
 </ul>
 <p>Not every stations is currently part of the real-time network. Therefore <code>realtime_stations()</code> points to a (hopefully) updated ECCC data file of active real-time stations. We can use the <code>realtime_stations()</code> functionality to get a vector of stations by jurisdiction. For example, we can choose all the stations in Prince Edward Island using the following:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">realtime_stations</span>(<span class="dt">prov_terr_state_loc =</span> <span class="st">&quot;PE&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw">realtime_stations</span>(<span class="dt">prov_terr_state_loc =</span> <span class="st">&quot;PE&quot;</span>)</span></code></pre></div>
 <p><code>hy_stations()</code> and <code>realtime_stations()</code> perform similar tasks albeit on different data sources. <code>hy_stations()</code> extracts directly from HYDAT. In addition to real-time stations, <code>hy_stations()</code> outputs discontinued and non-real-time stations:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="kw">hy_stations</span>(<span class="dt">prov_terr_state_loc =</span> <span class="st">&quot;PE&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw">hy_stations</span>(<span class="dt">prov_terr_state_loc =</span> <span class="st">&quot;PE&quot;</span>)</span></code></pre></div>
 <p>This is contrast to <code>realtime_stations()</code> which downloads all real-time stations. Though this is not always the case, it is best to use <code>realtime_stations()</code> when dealing with real-time data and <code>hy_stations()</code> when interacting with HYDAT. It is also appropriate to filter the output of <code>hy_stations()</code> by the <code>REAL_TIME</code> column.</p>
 <div id="meterological-service-of-canada-datamart---realtime_dd" class="section level3">
 <h3>Meterological Service of Canada datamart - <code>realtime_dd()</code></h3>
 <p>To download real-time data using the datamart we can use approximately the same conventions discussed above. Using <code>realtime_dd()</code> we can easily select specific stations by supplying a station of interest:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1"><span class="kw">realtime_dd</span>(<span class="dt">station_number =</span> <span class="st">&quot;08LG006&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="kw">realtime_dd</span>(<span class="dt">station_number =</span> <span class="st">&quot;08LG006&quot;</span>)</span></code></pre></div>
 <p>Another option is to provide simply the province as an argument and download all stations from that province:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1"><span class="kw">realtime_dd</span>(<span class="dt">prov_terr_state_loc =</span> <span class="st">&quot;PE&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="kw">realtime_dd</span>(<span class="dt">prov_terr_state_loc =</span> <span class="st">&quot;PE&quot;</span>)</span></code></pre></div>
 </div>
 </div>
 <div id="search-functions" class="section level2">
 <h2>Search functions</h2>
 <p>You can also make use of auxiliary functions in <code>tidyhydat</code> called <code>search_stn_name()</code> and <code>search_stn_number()</code> to look for matches when you know part of a name of a station. For example:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1"><span class="kw">search_stn_name</span>(<span class="st">&quot;liard&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="kw">search_stn_name</span>(<span class="st">&quot;liard&quot;</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 9 x 5
 ##   STATION_NUMBER STATION_NAME               PROV_TERR_STATE_~ LATITUDE LONGITUDE
 ##   &lt;chr&gt;          &lt;chr&gt;                      &lt;chr&gt;                &lt;dbl&gt;     &lt;dbl&gt;
@@ -451,40 +538,40 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 ## 8 10ED008        LIARD RIVER AT LINDBERG L~ NT                    61.1     -123.
 ## 9 10GC004        MACKENZIE RIVER ABOVE LIA~ NT                    61.9     -121.</code></pre>
 <p>Similarly, <code>search_stn_number()</code> can be useful if you are interested in all stations from the <em>08MF</em> sub-sub-drainage:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1"><span class="kw">search_stn_number</span>(<span class="st">&quot;08MF&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="kw">search_stn_number</span>(<span class="st">&quot;08MF&quot;</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 50 x 5
 ##    STATION_NUMBER STATION_NAME              PROV_TERR_STATE_~ LATITUDE LONGITUDE
 ##    &lt;chr&gt;          &lt;chr&gt;                     &lt;chr&gt;                &lt;dbl&gt;     &lt;dbl&gt;
 ##  1 08MF005        FRASER RIVER AT HOPE      BC                    49.4     -121.
-##  2 08MF040        FRASER RIVER ABOVE TEXAS~ BC                    50.6     -122.
-##  3 08MF062        COQUIHALLA RIVER BELOW N~ BC                    49.5     -121.
-##  4 08MF065        NAHATLATCH RIVER BELOW T~ BC                    50.0     -122.
-##  5 08MF068        COQUIHALLA RIVER ABOVE A~ BC                    49.4     -121.
-##  6 08MF001        ANDERSON RIVER NEAR BOST~ BC                    49.8     -121.
-##  7 08MF002        BOULDER CREEK NEAR LAIDL~ BC                    49.3     -122.
-##  8 08MF003        COQUIHALLA RIVER NEAR HO~ BC                    49.4     -121.
-##  9 08MF004        FRASER RIVER ABOVE THOMP~ BC                    50.2     -122.
-## 10 08MF006        WAHLEACH CREEK NEAR LAID~ BC                    49.3     -122.
+##  2 08MF035        FRASER RIVER NEAR AGASSIZ BC                    49.2     -122.
+##  3 08MF040        FRASER RIVER ABOVE TEXAS~ BC                    50.6     -122.
+##  4 08MF062        COQUIHALLA RIVER BELOW N~ BC                    49.5     -121.
+##  5 08MF065        NAHATLATCH RIVER BELOW T~ BC                    50.0     -122.
+##  6 08MF068        COQUIHALLA RIVER ABOVE A~ BC                    49.4     -121.
+##  7 08MF072        FRASER RIVER AT LAIDLAW   BC                    49.3     -122.
+##  8 08MF073        FRASER RIVER AT HARRISON~ BC                    49.2     -122.
+##  9 08MF001        ANDERSON RIVER NEAR BOST~ BC                    49.8     -121.
+## 10 08MF002        BOULDER CREEK NEAR LAIDL~ BC                    49.3     -122.
 ## # ... with 40 more rows</code></pre>
 </div>
 <div id="using-joins" class="section level2">
 <h2>Using joins</h2>
 <p>Sometimes it is required to make use of information from two tables from HYDAT. In some cases, we need to combine the information into one table using a common column. Here we will illustrate calculating runoff by combining the <code>hy_stations</code> tables with the <code>hy_daily_flows</code> table by the <code>STATION_NUMBER</code> column:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1">stns &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;08NH130&quot;</span>, <span class="st">&quot;08NH005&quot;</span>)</a>
-<a class="sourceLine" id="cb20-2" title="2">runoff_data &lt;-<span class="st"> </span><span class="kw">hy_daily_flows</span>(<span class="dt">station_number =</span> stns, <span class="dt">start_date =</span> <span class="st">&quot;2000-01-01&quot;</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb20-3" title="3"><span class="st">  </span><span class="kw">left_join</span>(</a>
-<a class="sourceLine" id="cb20-4" title="4">    <span class="kw">hy_stations</span>(<span class="dt">station_number =</span> stns) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb20-5" title="5"><span class="st">      </span><span class="kw">select</span>(STATION_NUMBER, STATION_NAME, DRAINAGE_AREA_GROSS),</a>
-<a class="sourceLine" id="cb20-6" title="6">    <span class="dt">by =</span> <span class="st">&quot;STATION_NUMBER&quot;</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb20-7" title="7"><span class="st">  </span><span class="co">## conversion to mm/d</span></a>
-<a class="sourceLine" id="cb20-8" title="8"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">runoff =</span> Value <span class="op">/</span><span class="st"> </span>DRAINAGE_AREA_GROSS <span class="op">*</span><span class="st"> </span><span class="dv">86400</span> <span class="op">/</span><span class="st"> </span><span class="fl">1e6</span> <span class="op">*</span><span class="st"> </span><span class="fl">1e3</span>) </a>
-<a class="sourceLine" id="cb20-9" title="9"></a>
-<a class="sourceLine" id="cb20-10" title="10"></a>
-<a class="sourceLine" id="cb20-11" title="11"><span class="kw">ggplot</span>(runoff_data) <span class="op">+</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb20-12" title="12"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x =</span> Date, <span class="dt">y =</span> runoff, <span class="dt">colour =</span> STATION_NAME)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb20-13" title="13"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Mean daily runoff [mm/d]&quot;</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb20-14" title="14"><span class="st">  </span><span class="kw">theme_minimal</span>()</a></code></pre></div>
-<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>stns &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;08NH130&quot;</span>, <span class="st">&quot;08NH005&quot;</span>)</span>
+<span id="cb20-2"><a href="#cb20-2"></a>runoff_data &lt;-<span class="st"> </span><span class="kw">hy_daily_flows</span>(<span class="dt">station_number =</span> stns, <span class="dt">start_date =</span> <span class="st">&quot;2000-01-01&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb20-3"><a href="#cb20-3"></a><span class="st">  </span><span class="kw">left_join</span>(</span>
+<span id="cb20-4"><a href="#cb20-4"></a>    <span class="kw">hy_stations</span>(<span class="dt">station_number =</span> stns) <span class="op">%&gt;%</span></span>
+<span id="cb20-5"><a href="#cb20-5"></a><span class="st">      </span><span class="kw">select</span>(STATION_NUMBER, STATION_NAME, DRAINAGE_AREA_GROSS),</span>
+<span id="cb20-6"><a href="#cb20-6"></a>    <span class="dt">by =</span> <span class="st">&quot;STATION_NUMBER&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb20-7"><a href="#cb20-7"></a><span class="st">  </span><span class="co">## conversion to mm/d</span></span>
+<span id="cb20-8"><a href="#cb20-8"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">runoff =</span> Value <span class="op">/</span><span class="st"> </span>DRAINAGE_AREA_GROSS <span class="op">*</span><span class="st"> </span><span class="dv">86400</span> <span class="op">/</span><span class="st"> </span><span class="fl">1e6</span> <span class="op">*</span><span class="st"> </span><span class="fl">1e3</span>) </span>
+<span id="cb20-9"><a href="#cb20-9"></a></span>
+<span id="cb20-10"><a href="#cb20-10"></a></span>
+<span id="cb20-11"><a href="#cb20-11"></a><span class="kw">ggplot</span>(runoff_data) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb20-12"><a href="#cb20-12"></a><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x =</span> Date, <span class="dt">y =</span> runoff, <span class="dt">colour =</span> STATION_NAME)) <span class="op">+</span></span>
+<span id="cb20-13"><a href="#cb20-13"></a><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Mean daily runoff [mm/d]&quot;</span>) <span class="op">+</span></span>
+<span id="cb20-14"><a href="#cb20-14"></a><span class="st">  </span><span class="kw">theme_minimal</span>()</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
 </div>
 </div>
 <div id="license" class="section level1">

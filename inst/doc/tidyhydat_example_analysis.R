@@ -69,7 +69,7 @@ longest_record_data %>%
   geom_tile() +
   scale_x_date(date_labels = "%b") +
   scale_y_reverse(expand = c(0, 0)) +
-  scale_fill_gradientn(name = "Discharge (m^3/s) ", colours = rainbow(10)) +
+  scale_fill_viridis_c(name = "Discharge (m^3/s) ") +
   labs(y = "Year", x = "Date") +
   theme_minimal() +
   theme(legend.position="bottom")
@@ -115,7 +115,7 @@ ggplot(pct_flow, aes(x = Date_no_year, y = Value)) +
   geom_point(aes(colour = prctile)) +
   geom_line(data = nunavut_realtime, aes(x = Date_day), colour = "black") +
   geom_point(data = nunavut_realtime, aes(x = Date_day, shape = factor(year(Date_day))), colour = "black") +
-  scale_colour_gradientn(name = "Discharge Percentile", colours = rainbow(10)) +
+  scale_colour_viridis_c(name = "Discharge Percentile") +
   scale_shape_discrete(name = "Year") +
   theme_minimal() +
   labs(title = "Historical flow relative to current year",

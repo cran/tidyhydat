@@ -1,6 +1,6 @@
 Package: tidyhydat
 Title: Extract and Tidy Canadian 'Hydrometric' Data
-Version: 0.5.0
+Version: 0.5.1
 Authors@R: c(person("Sam", "Albers", email = "sam.albers@gov.bc.ca", role = c("aut", "cre"),
     comment = c(ORCID = "0000-0002-9270-7884")),
     person("David", "Hutchinson", email = "david.hutchinson@canada.ca", role = "ctb"),
@@ -13,12 +13,12 @@ Authors@R: c(person("Sam", "Albers", email = "sam.albers@gov.bc.ca", role = c("a
             comment = "Reviewed for rOpenSci")
     )
 Description: Provides functions to access historical and real-time national 'hydrometric'
-    data from Water Survey of Canada data sources (<http://dd.weather.gc.ca/hydrometric/csv/> and
-    <http://collaboration.cmc.ec.gc.ca/cmc/hydrometrics/www/>) and then applies tidy data principles.
+    data from Water Survey of Canada data sources (<https://dd.weather.gc.ca/hydrometric/csv/> and
+    <https://collaboration.cmc.ec.gc.ca/cmc/hydrometrics/www/>) and then applies tidy data principles.
 License: Apache License (== 2.0) | file LICENSE
 URL: https://docs.ropensci.org/tidyhydat/
 BugReports: https://github.com/ropensci/tidyhydat/issues
-Depends: R (>= 3.2.0)
+Depends: R (>= 3.2.3)
 Imports: cli (>= 1.0.0), crayon (>= 1.3.4), DBI (>= 0.7), dbplyr (>=
         1.1.0), dplyr (>= 0.7.4), httr (>= 1.3.1), lubridate (>=
         1.6.0), rappdirs (>= 0.3.1), readr (>= 1.1.1), rlang (>=
@@ -27,9 +27,9 @@ Suggests: ggplot2, knitr, rmarkdown, testthat, covr
 VignetteBuilder: knitr
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.0.0
+RoxygenNote: 7.1.1
 NeedsCompilation: no
-Packaged: 2019-12-02 19:03:12 UTC; SALBERS
+Packaged: 2020-10-07 15:56:21 UTC; SALBERS
 Author: Sam Albers [aut, cre] (<https://orcid.org/0000-0002-9270-7884>),
   David Hutchinson [ctb],
   Dewey Dunnington [ctb],
@@ -39,4 +39,4 @@ Author: Sam Albers [aut, cre] (<https://orcid.org/0000-0002-9270-7884>),
   Laura DeCicco [rev] (Reviewed for rOpenSci)
 Maintainer: Sam Albers <sam.albers@gov.bc.ca>
 Repository: CRAN
-Date/Publication: 2019-12-02 20:20:03 UTC
+Date/Publication: 2020-10-08 04:40:03 UTC

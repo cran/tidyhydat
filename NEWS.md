@@ -1,4 +1,10 @@
-# tidhydat 0.5.0
+# tidyhydat 0.5.1
+- Replace `class(x) ==` with `inherits`
+- Fix bug and added corresponding tests where a request for multiple stations to `realtime_dd` would fail if any data was missing
+- Update internal data
+- Fix all non-secure or borken links
+
+# tidyhydat 0.5.0
 
 ### MINOR FIXES
 - Revise multi prov test to realtime because of network load and prone to intermittent failure
