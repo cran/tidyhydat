@@ -12,7 +12,7 @@
 
 <meta name="author" content="Dewey Dunnington" />
 
-<meta name="date" content="2021-05-17" />
+<meta name="date" content="2021-09-15" />
 
 <title>Stepping into the HYDAT Database</title>
 
@@ -40,6 +40,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -140,7 +141,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Stepping into the HYDAT Database</h1>
 <h4 class="author">Dewey Dunnington</h4>
-<h4 class="date">2021-05-17</h4>
+<h4 class="date">2021-09-15</h4>
 
 
 
@@ -170,8 +171,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>To inspect any particular table, use the <code>tbl()</code> function with the <code>src</code> and the table name.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl</span>(src, <span class="st">&quot;STN_OPERATION_SCHEDULE&quot;</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;STN_OPERATION_SCHEDULE&gt; [?? x 5]</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Database: sqlite 3.35.5</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   [C:\Users\salbers\AppData\Local\Temp\Rtmpu2LDN0\Rinst5e44cf817ca\tidyhydat\test_db\tinyhydat.sqlite3]</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Database: sqlite 3.36.0</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   [C:\Users\salbers\AppData\Local\Temp\RtmpWSsJ0A\Rinst5c484706235c\tidyhydat\test_db\tinyhydat.sqlite3]</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    STATION_NUMBER DATA_TYPE  YEAR MONTH_FROM MONTH_TO</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;          &lt;chr&gt;     &lt;int&gt; &lt;chr&gt;      &lt;chr&gt;   </span></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 01AP003        H          1923 &lt;NA&gt;       &lt;NA&gt;    </span></span>

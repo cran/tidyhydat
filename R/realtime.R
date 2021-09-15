@@ -20,7 +20,8 @@
 #'
 #' @inheritParams hy_stations
 #'
-#' @return A tibble of water flow and level values. 
+#' @return A tibble of water flow and level values. The date and time of the query (in UTC) is also 
+#' stored as an attribute.
 #' 
 #' @format A tibble with 8 variables:
 #' \describe{
@@ -41,8 +42,11 @@
 #' ## Download from multiple provinces
 #' realtime_dd(station_number=c("01CD005","08MF005"))
 #'
-#' # To download all stations in Prince Edward Island:
-#' realtime_dd(prov_terr_state_loc = "PE")
+#' ## To download all stations in Prince Edward Island:
+#' pei <- realtime_dd(prov_terr_state_loc = "PE")
+#' 
+#' ## Access the time of query
+#' attributes(pei)$query_time
 #' }
 #' 
 #' @family realtime functions
@@ -141,15 +145,16 @@ realtime_stations <- function(prov_terr_state_loc = NULL) {
 
 #' Add local datetime column to realtime tibble
 #' 
-#' Adds \code{local_datetime} and \code{tz_used} columns based on either the first timezone specified into the tibble or
-#' a user supplied timezone. This function is meant to used in a pipe with the \code{realtime_dd()} function. 
+#' Adds `local_datetime` and `tz_used` columns based on either the most common timezone in the original data or
+#' a user supplied timezone. This function is meant to used in a pipe with the `realtime_dd()` function. 
 #' 
 #' @param .data Tibble created by \code{realtime_dd}
 #' @param set_tz A timezone string in the format of \code{OlsonNames()}
 #' 
-#' @details Date from realtime_dd is supplied in UTC which is the easiest format to work with across timezones. 
-#' \code{realtime_add_local_datetime} adjusts local_datetime to a common timezone. This is most useful when all stations exist
-#' within the same timezone though it is possible.
+#' @details `Date` from `realtime_dd` is supplied in UTC which is the easiest format to work with across timezones. This function
+#' does not change `Date` from UTC. Rather `station_tz` specifies the local timezone name and is useful in instances where
+#' `realtime_add_local_datetime` adjusts local_datetime to a common timezone that is not the `station_tz`. This function is most
+#' useful when all stations exist within the same timezone. 
 #' 
 #' @examples
 #' \dontrun{
@@ -163,7 +168,7 @@ realtime_add_local_datetime <- function(.data, set_tz = NULL){
   
   timezone_data <- dplyr::left_join(.data, tidyhydat::allstations[,c("STATION_NUMBER", "station_tz")], by = c("STATION_NUMBER"))
   
-  tz_used <- timezone_data$station_tz[1]
+  tz_used <- names(sort(table(timezone_data$station_tz), decreasing = TRUE)[1])
   
   if(dplyr::n_distinct(timezone_data$station_tz) > 1) {
     warning(paste0("Multiple timezones detected. All times in local_time have been adjusted to ", tz_used), call. = FALSE)

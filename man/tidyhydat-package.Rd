@@ -35,7 +35,8 @@ For more information on HYDAT and ECCC data sources
 Useful links:
 \itemize{
   \item \url{https://docs.ropensci.org/tidyhydat/}
-  \item Report bugs at \url{https://github.com/ropensci/tidyhydat/issues}
+  \item \url{https://github.com/ropensci/tidyhydat/}
+  \item Report bugs at \url{https://github.com/ropensci/tidyhydat/issues/}
 }
 
 }
@@ -48,6 +49,7 @@ Other contributors:
   \item Dewey Dunnington \email{dewey@fishandwhistle.net} [contributor]
   \item Ryan Whaley \email{rdgwhaley@gmail.com} [contributor]
   \item Province of British Columbia [copyright holder]
+  \item Government of Canada [data contributor]
   \item Luke Winslow (Reviewed for rOpenSci) [reviewer]
   \item Laura DeCicco (Reviewed for rOpenSci) [reviewer]
 }
