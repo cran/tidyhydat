@@ -1,6 +1,10 @@
-# tidyhydat (development version)
+# tidyhydat 0.5.6
+- fixed CRAN document issue
+- fixed bug created by HYDAT database name (#175)
 
-### MINOR IMPROVEMENT
+# tidyhydat 0.5.5
+
+### MINOR IMPROVEMENTS
 - `download_hydat()` now has an `ask` parameter that can be used to bypass the keypress confirmation when downloading the HYDAT database (@rchlumsk, #165). 
 - Change maintainer email. 
 - Precompile vignettes for CRAN
