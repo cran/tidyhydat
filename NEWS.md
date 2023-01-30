@@ -1,3 +1,7 @@
+# tidyhydat 0.5.9
+- drop `.data` pronoun throughout
+- fixed failing CRAN test
+
 # tidyhydat 0.5.8
 - fix bug where hydat folder was not being created
 
