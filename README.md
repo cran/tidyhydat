@@ -4,7 +4,7 @@
 
 <!-- badges: start -->
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/license/apache-2-0/)
 [![Coverage
 status](https://codecov.io/gh/ropensci/tidyhydat/branch/master/graph/badge.svg)](https://codecov.io/github/ropensci/tidyhydat?branch=master)
 [![R build
@@ -86,23 +86,75 @@ the same conventions discussed above. Using `realtime_dd()` we can
 easily select specific stations by supplying a station of interest:
 
     realtime_dd(station_number = "08MF005")
-    #>   Queried on: 2023-01-30 17:30:14 (UTC)
-    #>   Date range: 2022-12-31 to 2023-01-30 
-    #> # A tibble: 17,478 × 8
+    #>   Queried on: 2023-04-04 12:54:46 (UTC)
+    #>   Date range: 2023-03-05 to 2023-04-04 
+    #> # A tibble: 17,118 × 8
     #>    STATION_NUMBER PROV_TE…¹ Date                Param…² Value Grade Symbol Code 
     #>    <chr>          <chr>     <dttm>              <chr>   <dbl> <chr> <chr>  <chr>
-    #>  1 08MF005        BC        2022-12-31 08:00:00 Flow      747 <NA>  <NA>   1    
-    #>  2 08MF005        BC        2022-12-31 08:05:00 Flow      747 <NA>  <NA>   1    
-    #>  3 08MF005        BC        2022-12-31 08:10:00 Flow      749 <NA>  <NA>   1    
-    #>  4 08MF005        BC        2022-12-31 08:15:00 Flow      748 <NA>  <NA>   1    
-    #>  5 08MF005        BC        2022-12-31 08:20:00 Flow      747 <NA>  <NA>   1    
-    #>  6 08MF005        BC        2022-12-31 08:25:00 Flow      748 <NA>  <NA>   1    
-    #>  7 08MF005        BC        2022-12-31 08:30:00 Flow      747 <NA>  <NA>   1    
-    #>  8 08MF005        BC        2022-12-31 08:35:00 Flow      749 <NA>  <NA>   1    
-    #>  9 08MF005        BC        2022-12-31 08:40:00 Flow      747 <NA>  <NA>   1    
-    #> 10 08MF005        BC        2022-12-31 08:45:00 Flow      746 <NA>  <NA>   1    
-    #> # … with 17,468 more rows, and abbreviated variable names ¹​PROV_TERR_STATE_LOC,
+    #>  1 08MF005        BC        2023-03-05 08:00:00 Flow      571 <NA>  <NA>   1    
+    #>  2 08MF005        BC        2023-03-05 08:05:00 Flow      572 <NA>  <NA>   1    
+    #>  3 08MF005        BC        2023-03-05 08:10:00 Flow      571 <NA>  <NA>   1    
+    #>  4 08MF005        BC        2023-03-05 08:15:00 Flow      571 <NA>  <NA>   1    
+    #>  5 08MF005        BC        2023-03-05 08:20:00 Flow      571 <NA>  <NA>   1    
+    #>  6 08MF005        BC        2023-03-05 08:25:00 Flow      572 <NA>  <NA>   1    
+    #>  7 08MF005        BC        2023-03-05 08:30:00 Flow      572 <NA>  <NA>   1    
+    #>  8 08MF005        BC        2023-03-05 08:35:00 Flow      571 <NA>  <NA>   1    
+    #>  9 08MF005        BC        2023-03-05 08:40:00 Flow      572 <NA>  <NA>   1    
+    #> 10 08MF005        BC        2023-03-05 08:45:00 Flow      573 <NA>  <NA>   1    
+    #> # … with 17,108 more rows, and abbreviated variable names ¹​PROV_TERR_STATE_LOC,
     #> #   ²​Parameter
+
+Or we can use `realtime_ws`:
+
+    realtime_ws(
+      station_number = "08MF005",
+      parameters = c(46, 5), ## see param_id for a list of codes
+      start_date = Sys.Date() - 14,
+      end_date = Sys.Date()
+    )
+    #> Warning: One or more parsing issues, call `problems()` on your data frame for details,
+    #> e.g.:
+    #>   dat <- vroom(...)
+    #>   problems(dat)
+    #> All station successfully retrieved
+    #> All parameters successfully retrieved
+    #> # A tibble: 4,384 × 10
+    #>    STATIO…¹ Date                Name_En Value Unit  Grade Symbol Appro…² Param…³
+    #>    <chr>    <dttm>              <chr>   <dbl> <chr> <chr> <chr>    <int>   <dbl>
+    #>  1 08MF005  2023-03-21 00:00:00 Water …  5.06 °C    -1    <NA>        NA       5
+    #>  2 08MF005  2023-03-21 01:00:00 Water …  4.65 °C    -1    <NA>        NA       5
+    #>  3 08MF005  2023-03-21 02:00:00 Water …  4.63 °C    -1    <NA>        NA       5
+    #>  4 08MF005  2023-03-21 03:00:00 Water …  4.22 °C    -1    <NA>        NA       5
+    #>  5 08MF005  2023-03-21 04:00:00 Water …  4.4  °C    -1    <NA>        NA       5
+    #>  6 08MF005  2023-03-21 05:00:00 Water …  3.94 °C    -1    <NA>        NA       5
+    #>  7 08MF005  2023-03-21 06:00:00 Water …  4    °C    -1    <NA>        NA       5
+    #>  8 08MF005  2023-03-21 07:00:00 Water …  4    °C    -1    <NA>        NA       5
+    #>  9 08MF005  2023-03-21 08:00:00 Water …  3.76 °C    -1    <NA>        NA       5
+    #> 10 08MF005  2023-03-21 09:00:00 Water …  3.7  °C    -1    <NA>        NA       5
+    #> # … with 4,374 more rows, 1 more variable: Code <chr>, and abbreviated variable
+    #> #   names ¹​STATION_NUMBER, ²​Approval, ³​Parameter
+
+## Compare realtime\_ws and realtime\_dd
+
+`tidyhydat` provides two methods to download realtime data.
+`realtime_dd()` provides a function to import .csv files from
+[here](https://dd.weather.gc.ca/hydrometric/csv/). `realtime_ws()` is an
+client for a web service hosted by ECCC. `realtime_ws()` has several
+difference to `realtime_dd()`. These include:
+
+-   *Speed*: The `realtime_ws()` is much faster for larger queries
+    (i.e. many stations). For single station queries to `realtime_dd()`
+    is more appropriate.
+-   *Length of record*: `realtime_ws()` records goes back further in
+    time.
+-   *Type of parameters*: `realtime_dd()` are restricted to river flow
+    (either flow and level) data. In contrast `realtime_ws()` can
+    download several different parameters depending on what is available
+    for that station. See `data("param_id")` for a list and explanation
+    of the parameters.
+-   *Date/Time filtering*: `realtime_ws()` provides argument to select a
+    date range. Selecting a data range with `realtime_dd()` is not
+    possible until after all files have been downloaded.
 
 ### Plotting
 
@@ -112,7 +164,7 @@ Plot methods are also provided to quickly visualize realtime data:
 
     plot(realtime_ex)
 
-![](man/figures/README-unnamed-chunk-7-1.png)
+![](man/figures/README-unnamed-chunk-8-1.png)
 
 and also historical data:
 
@@ -120,7 +172,7 @@ and also historical data:
 
     plot(hy_ex)
 
-![](man/figures/README-unnamed-chunk-8-1.png)
+![](man/figures/README-unnamed-chunk-9-1.png)
 
 ## Getting Help or Reporting an Issue
 
