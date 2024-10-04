@@ -42,8 +42,8 @@ station_choice <- function(hydat_con, station_number, prov_terr_state_loc) {
 
   ## Get all stations
   if (is.null(station_number) && is.null(prov_terr_state_loc)) {
-    stns <- dplyr::tbl(hydat_con, "STATIONS") %>%
-      dplyr::collect() %>%
+    stns <- dplyr::tbl(hydat_con, "STATIONS") |>
+      dplyr::collect() |>
       dplyr::pull(STATION_NUMBER)
     return(stns)
   }
@@ -63,9 +63,9 @@ station_choice <- function(hydat_con, station_number, prov_terr_state_loc) {
 
     if (any(!prov_terr_state_loc %in% stn_option) == TRUE) stop("Invalid prov_terr_state_loc value")
 
-    dplyr::tbl(hydat_con, "STATIONS") %>%
-      dplyr::filter(!!sym_PROV_TERR_STATE_LOC %in% prov_terr_state_loc) %>%
-      dplyr::collect() %>%
+    dplyr::tbl(hydat_con, "STATIONS") |>
+      dplyr::filter(!!sym_PROV_TERR_STATE_LOC %in% prov_terr_state_loc) |>
+      dplyr::collect() |>
       dplyr::pull(STATION_NUMBER)
   }
 }
@@ -94,11 +94,6 @@ date_check <- function(start_date = NULL, end_date = NULL) {
 
   invisible(list(start_is_null = start_is_null, end_is_null = end_is_null))
 }
-
-#' @importFrom dplyr %>%
-#' @export
-dplyr::`%>%`
-
 
 ## Simple error handler
 #' @noRd
@@ -147,10 +142,10 @@ multi_param_msg <- function(data_arg, stns, params) {
 
   sym_Parameter <- sym("Parameter")
 
-  flow_stns <- data_arg %>%
-    dplyr::filter(!!sym_Parameter == params) %>%
-    dplyr::distinct(STATION_NUMBER) %>%
-    dplyr::arrange(STATION_NUMBER) %>%
+  flow_stns <- data_arg |>
+    dplyr::filter(!!sym_Parameter == params) |>
+    dplyr::distinct(STATION_NUMBER) |>
+    dplyr::arrange(STATION_NUMBER) |>
     dplyr::pull(STATION_NUMBER)
 
   good_stns <- c()
@@ -184,8 +179,12 @@ ask <- function(...) {
 # issues and fail with an informative error
 # message on where to download HYDAT.
 #' @noRd
-network_check <- function(url) {
-  tryCatch(httr::GET(url),
+network_check <- function(url, proxy_url = NULL, proxy_port = NULL) {
+  req <- httr2::request(base_url = url)
+  if (!is.null(proxy_url) && !is.null(proxy_port)) {
+    req <- httr2::req_proxy(req, url = proxy_url, port = proxy_port)
+  }
+  tryCatch(httr2::req_perform(req),
     error = function(e) {
       if (grepl("Timeout was reached:", e$message)) {
         stop(paste0("Could not connect to HYDAT source. Check your connection settings.
@@ -197,6 +196,12 @@ network_check <- function(url) {
       }
     }
   )
+}
+
+tidyhydat_agent <- function(req) {
+  httr2::req_user_agent(
+    req, 
+    string = "https://github.com/ropensci/tidyhydat")
 }
 
 
@@ -215,8 +220,8 @@ network_check <- function(url) {
 #' @examples
 #' \dontrun{
 #'
-#' hy_stations(prov_terr_state_loc = "PE") %>%
-#'   pull_station_number() %>%
+#' hy_stations(prov_terr_state_loc = "PE") |>
+#'   pull_station_number() |>
 #'   hy_annual_instant_peaks()
 #' }
 #'
@@ -246,4 +251,10 @@ hy_expected_tbls <- function() {
 is_mac <- function() {
   system_info <- Sys.info()
   grepl("darwin", tolower(system_info["sysname"]))
+}
+
+tidyhydat_perform  <- function(req, ...) {
+  req <- httr2::req_retry(req, max_tries = 5)
+  req <- httr2::req_progress(req)
+  httr2::req_perform(req, ...)
 }

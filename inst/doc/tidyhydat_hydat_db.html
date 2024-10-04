@@ -12,7 +12,7 @@
 
 <meta name="author" content="Dewey Dunnington" />
 
-<meta name="date" content="2024-01-09" />
+<meta name="date" content="2024-10-04" />
 
 <title>Stepping into the HYDAT Database</title>
 
@@ -51,7 +51,7 @@ overflow: visible;
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -62,7 +62,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -340,7 +340,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Stepping into the HYDAT Database</h1>
 <h4 class="author">Dewey Dunnington</h4>
-<h4 class="date">2024-01-09</h4>
+<h4 class="date">2024-10-04</h4>
 
 
 
@@ -358,7 +358,7 @@ majority of users, and is intended only for advanced R users.</p>
 must be downloaded using <code>hydat_download()</code>. This is a fairly
 lengthy operation (the download is around 1 GB) and may require several
 cups of coffee worth of your time.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hydat_download</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">hydat_download</span>()</span></code></pre></div>
 </div>
 <div id="working-with-hydat-tables" class="section level2">
 <h2>Working with HYDAT tables</h2>
@@ -366,45 +366,32 @@ cups of coffee worth of your time.</p>
 using the <a href="https://dplyr.tidyverse.org/">dplyr</a> and <a href="https://dbplyr.tidyverse.org/">dbplyr</a> packages. This package
 has simplified the connection process, so all you have to do to connect
 to the database is use <code>hy_src()</code>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>src <span class="ot">&lt;-</span> <span class="fu">hy_src</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>src <span class="ot">&lt;-</span> <span class="fu">hy_src</span>()</span></code></pre></div>
 <p>To list the tables, use <code>src_tbls()</code> from the
 <strong>dplyr</strong> package.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">src_tbls</span>(src)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;AGENCY_LIST&quot;            &quot;ANNUAL_INSTANT_PEAKS&quot;  </span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [3] &quot;ANNUAL_STATISTICS&quot;      &quot;CONCENTRATION_SYMBOLS&quot; </span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [5] &quot;DATA_SYMBOLS&quot;           &quot;DATA_TYPES&quot;            </span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [7] &quot;DATUM_LIST&quot;             &quot;DLY_FLOWS&quot;             </span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [9] &quot;DLY_LEVELS&quot;             &quot;MEASUREMENT_CODES&quot;     </span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [11] &quot;OPERATION_CODES&quot;        &quot;PEAK_CODES&quot;            </span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [13] &quot;PRECISION_CODES&quot;        &quot;REGIONAL_OFFICE_LIST&quot;  </span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [15] &quot;SAMPLE_REMARK_CODES&quot;    &quot;SED_DATA_TYPES&quot;        </span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [17] &quot;SED_DLY_LOADS&quot;          &quot;SED_DLY_SUSCON&quot;        </span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [19] &quot;SED_SAMPLES&quot;            &quot;SED_SAMPLES_PSD&quot;       </span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [21] &quot;SED_VERTICAL_LOCATION&quot;  &quot;SED_VERTICAL_SYMBOLS&quot;  </span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [23] &quot;STATIONS&quot;               &quot;STN_DATA_COLLECTION&quot;   </span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [25] &quot;STN_DATA_RANGE&quot;         &quot;STN_DATUM_CONVERSION&quot;  </span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [27] &quot;STN_DATUM_UNRELATED&quot;    &quot;STN_OPERATION_SCHEDULE&quot;</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [29] &quot;STN_REGULATION&quot;         &quot;STN_REMARKS&quot;           </span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [31] &quot;STN_REMARK_CODES&quot;       &quot;STN_STATUS_CODES&quot;      </span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [33] &quot;VERSION&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">src_tbls</span>(src)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;AGENCY_LIST&quot;            &quot;ANNUAL_INSTANT_PEAKS&quot;   &quot;ANNUAL_STATISTICS&quot;      &quot;CONCENTRATION_SYMBOLS&quot;  &quot;DATA_SYMBOLS&quot;           &quot;DATA_TYPES&quot;             &quot;DATUM_LIST&quot;             &quot;DLY_FLOWS&quot;              &quot;DLY_LEVELS&quot;            </span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt; [10] &quot;MEASUREMENT_CODES&quot;      &quot;OPERATION_CODES&quot;        &quot;PEAK_CODES&quot;             &quot;PRECISION_CODES&quot;        &quot;REGIONAL_OFFICE_LIST&quot;   &quot;SAMPLE_REMARK_CODES&quot;    &quot;SED_DATA_TYPES&quot;         &quot;SED_DLY_LOADS&quot;          &quot;SED_DLY_SUSCON&quot;        </span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; [19] &quot;SED_SAMPLES&quot;            &quot;SED_SAMPLES_PSD&quot;        &quot;SED_VERTICAL_LOCATION&quot;  &quot;SED_VERTICAL_SYMBOLS&quot;   &quot;STATIONS&quot;               &quot;STN_DATA_COLLECTION&quot;    &quot;STN_DATA_RANGE&quot;         &quot;STN_DATUM_CONVERSION&quot;   &quot;STN_DATUM_UNRELATED&quot;   </span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; [28] &quot;STN_OPERATION_SCHEDULE&quot; &quot;STN_REGULATION&quot;         &quot;STN_REMARKS&quot;            &quot;STN_REMARK_CODES&quot;       &quot;STN_STATUS_CODES&quot;       &quot;VERSION&quot;</span></span></code></pre></div>
 <p>To inspect any particular table, use the <code>tbl()</code> function
 with the <code>src</code> and the table name.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl</span>(src, <span class="st">&quot;STN_OPERATION_SCHEDULE&quot;</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;STN_OPERATION_SCHEDULE&gt; [?? x 5]</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Database: sqlite 3.41.2 [/Users/samalbers/_dev/gh_repos/tidyhydat/inst/test_db/tinyhydat.sqlite3]</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    STATION_NUMBER DATA_TYPE  YEAR MONTH_FROM MONTH_TO</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;          &lt;chr&gt;     &lt;int&gt; &lt;chr&gt;      &lt;chr&gt;   </span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 05AA008        H          2012 JAN        DEC     </span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 05AA008        H          2013 JAN        DEC     </span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 05AA008        H          2014 JAN        DEC     </span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 05AA008        H          2015 JAN        DEC     </span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 05AA008        H          2016 JAN        DEC     </span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 05AA008        H          2017 JAN        DEC     </span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 05AA008        H          2018 JAN        DEC     </span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 05AA008        H          2019 JAN        DEC     </span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 05AA008        H          2020 JAN        DEC     </span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 05AA008        Q          1910 &lt;NA&gt;       &lt;NA&gt;    </span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ more rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">tbl</span>(src, <span class="st">&quot;STN_OPERATION_SCHEDULE&quot;</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;`STN_OPERATION_SCHEDULE`&gt; [?? x 5]</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; # Database: sqlite 3.46.0 [/Users/samalbers/_dev/gh_repos/tidyhydat/inst/test_db/tinyhydat.sqlite3]</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt;    STATION_NUMBER DATA_TYPE  YEAR MONTH_FROM MONTH_TO</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;          &lt;chr&gt;     &lt;int&gt; &lt;chr&gt;      &lt;chr&gt;   </span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt;  1 05AA008        H          2012 JAN        DEC     </span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt;  2 05AA008        H          2013 JAN        DEC     </span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt;  3 05AA008        H          2014 JAN        DEC     </span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt;  4 05AA008        H          2015 JAN        DEC     </span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt;  5 05AA008        H          2016 JAN        DEC     </span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt;  6 05AA008        H          2017 JAN        DEC     </span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt;  7 05AA008        H          2018 JAN        DEC     </span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt;  8 05AA008        H          2019 JAN        DEC     </span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt;  9 05AA008        H          2020 JAN        DEC     </span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; 10 05AA008        Q          1910 &lt;NA&gt;       &lt;NA&gt;    </span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt; # ℹ more rows</span></span></code></pre></div>
 <p>Working with SQL tables in dplyr is much like working with regular
 data frames, except no data is actually read from the database until
 necessary. Because some of these tables are large (particularly those
@@ -412,27 +399,27 @@ containing the actual data), you will want to <code>filter()</code> the
 tables before you <code>collect()</code> them (the
 <code>collect()</code> operation loads them into memory as a
 <code>data.frame</code>).</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl</span>(src, <span class="st">&quot;STN_OPERATION_SCHEDULE&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(STATION_NUMBER <span class="sc">==</span> <span class="st">&quot;05AA008&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 103 × 5</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    STATION_NUMBER DATA_TYPE  YEAR MONTH_FROM MONTH_TO</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;          &lt;chr&gt;     &lt;int&gt; &lt;chr&gt;      &lt;chr&gt;   </span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 05AA008        H          2012 JAN        DEC     </span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 05AA008        H          2013 JAN        DEC     </span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 05AA008        H          2014 JAN        DEC     </span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 05AA008        H          2015 JAN        DEC     </span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 05AA008        H          2016 JAN        DEC     </span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 05AA008        H          2017 JAN        DEC     </span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 05AA008        H          2018 JAN        DEC     </span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 05AA008        H          2019 JAN        DEC     </span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 05AA008        H          2020 JAN        DEC     </span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 05AA008        Q          1910 &lt;NA&gt;       &lt;NA&gt;    </span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 93 more rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">tbl</span>(src, <span class="st">&quot;STN_OPERATION_SCHEDULE&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">filter</span>(STATION_NUMBER <span class="sc">==</span> <span class="st">&quot;05AA008&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">collect</span>()</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt; # A tibble: 103 × 5</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt;    STATION_NUMBER DATA_TYPE  YEAR MONTH_FROM MONTH_TO</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;          &lt;chr&gt;     &lt;int&gt; &lt;chr&gt;      &lt;chr&gt;   </span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt;  1 05AA008        H          2012 JAN        DEC     </span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt;  2 05AA008        H          2013 JAN        DEC     </span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">#&gt;  3 05AA008        H          2014 JAN        DEC     </span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">#&gt;  4 05AA008        H          2015 JAN        DEC     </span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt;  5 05AA008        H          2016 JAN        DEC     </span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co">#&gt;  6 05AA008        H          2017 JAN        DEC     </span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt;  7 05AA008        H          2018 JAN        DEC     </span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt;  8 05AA008        H          2019 JAN        DEC     </span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt;  9 05AA008        H          2020 JAN        DEC     </span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co">#&gt; 10 05AA008        Q          1910 &lt;NA&gt;       &lt;NA&gt;    </span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co">#&gt; # ℹ 93 more rows</span></span></code></pre></div>
 <p>When you are finished with the database (i.e., the end of the
 script), it is good practice to close the connection (you may get a loud
 red warning if you don’t!).</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hy_src_disconnect</span>(src)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">hy_src_disconnect</span>(src)</span></code></pre></div>
 </div>
 
 
