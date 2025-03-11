@@ -12,7 +12,7 @@
 
 <meta name="author" content="Dewey Dunnington" />
 
-<meta name="date" content="2024-10-04" />
+<meta name="date" content="2025-03-11" />
 
 <title>Stepping into the HYDAT Database</title>
 
@@ -340,7 +340,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Stepping into the HYDAT Database</h1>
 <h4 class="author">Dewey Dunnington</h4>
-<h4 class="date">2024-10-04</h4>
+<h4 class="date">2025-03-11</h4>
 
 
 
@@ -370,10 +370,11 @@ to the database is use <code>hy_src()</code>.</p>
 <p>To list the tables, use <code>src_tbls()</code> from the
 <strong>dplyr</strong> package.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">src_tbls</span>(src)</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;AGENCY_LIST&quot;            &quot;ANNUAL_INSTANT_PEAKS&quot;   &quot;ANNUAL_STATISTICS&quot;      &quot;CONCENTRATION_SYMBOLS&quot;  &quot;DATA_SYMBOLS&quot;           &quot;DATA_TYPES&quot;             &quot;DATUM_LIST&quot;             &quot;DLY_FLOWS&quot;              &quot;DLY_LEVELS&quot;            </span></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt; [10] &quot;MEASUREMENT_CODES&quot;      &quot;OPERATION_CODES&quot;        &quot;PEAK_CODES&quot;             &quot;PRECISION_CODES&quot;        &quot;REGIONAL_OFFICE_LIST&quot;   &quot;SAMPLE_REMARK_CODES&quot;    &quot;SED_DATA_TYPES&quot;         &quot;SED_DLY_LOADS&quot;          &quot;SED_DLY_SUSCON&quot;        </span></span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; [19] &quot;SED_SAMPLES&quot;            &quot;SED_SAMPLES_PSD&quot;        &quot;SED_VERTICAL_LOCATION&quot;  &quot;SED_VERTICAL_SYMBOLS&quot;   &quot;STATIONS&quot;               &quot;STN_DATA_COLLECTION&quot;    &quot;STN_DATA_RANGE&quot;         &quot;STN_DATUM_CONVERSION&quot;   &quot;STN_DATUM_UNRELATED&quot;   </span></span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; [28] &quot;STN_OPERATION_SCHEDULE&quot; &quot;STN_REGULATION&quot;         &quot;STN_REMARKS&quot;            &quot;STN_REMARK_CODES&quot;       &quot;STN_STATUS_CODES&quot;       &quot;VERSION&quot;</span></span></code></pre></div>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;AGENCY_LIST&quot;            &quot;ANNUAL_INSTANT_PEAKS&quot;   &quot;ANNUAL_STATISTICS&quot;      &quot;CONCENTRATION_SYMBOLS&quot;  &quot;DATA_SYMBOLS&quot;           &quot;DATA_TYPES&quot;             &quot;DATUM_LIST&quot;            </span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt;  [8] &quot;DLY_FLOWS&quot;              &quot;DLY_LEVELS&quot;             &quot;MEASUREMENT_CODES&quot;      &quot;OPERATION_CODES&quot;        &quot;PEAK_CODES&quot;             &quot;PRECISION_CODES&quot;        &quot;REGIONAL_OFFICE_LIST&quot;  </span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; [15] &quot;SAMPLE_REMARK_CODES&quot;    &quot;SED_DATA_TYPES&quot;         &quot;SED_DLY_LOADS&quot;          &quot;SED_DLY_SUSCON&quot;         &quot;SED_SAMPLES&quot;            &quot;SED_SAMPLES_PSD&quot;        &quot;SED_VERTICAL_LOCATION&quot; </span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; [22] &quot;SED_VERTICAL_SYMBOLS&quot;   &quot;STATIONS&quot;               &quot;STN_DATA_COLLECTION&quot;    &quot;STN_DATA_RANGE&quot;         &quot;STN_DATUM_CONVERSION&quot;   &quot;STN_DATUM_UNRELATED&quot;    &quot;STN_OPERATION_SCHEDULE&quot;</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; [29] &quot;STN_REGULATION&quot;         &quot;STN_REMARKS&quot;            &quot;STN_REMARK_CODES&quot;       &quot;STN_STATUS_CODES&quot;       &quot;VERSION&quot;</span></span></code></pre></div>
 <p>To inspect any particular table, use the <code>tbl()</code> function
 with the <code>src</code> and the table name.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">tbl</span>(src, <span class="st">&quot;STN_OPERATION_SCHEDULE&quot;</span>)</span>
