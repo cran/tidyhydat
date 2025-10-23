@@ -51,7 +51,9 @@
 #' @family realtime functions
 #' @export
 realtime_dd <- function(station_number = NULL, prov_terr_state_loc = NULL) {
-  if (!has_internet()) stop("No access to internet", call. = FALSE)
+  if (!has_internet()) {
+    stop("No access to internet", call. = FALSE)
+  }
 
   ## If station number isn't and user wants the province
   if (is.null(station_number)) {
@@ -95,33 +97,49 @@ realtime_dd <- function(station_number = NULL, prov_terr_state_loc = NULL) {
 #' }
 #'
 realtime_stations <- function(prov_terr_state_loc = NULL) {
-  if (!has_internet()) stop("No access to internet", call. = FALSE)
+  if (!has_internet()) {
+    stop("No access to internet", call. = FALSE)
+  }
 
   prov <- prov_terr_state_loc
 
-  realtime_link <- "https://dd.weather.gc.ca/hydrometric/doc/hydrometric_StationList.csv"
+  realtime_link <- paste0(
+    base_url_datamart(),
+    "/doc/hydrometric_StationList.csv"
+  )
   resp_str <- realtime_parser(realtime_link)
 
-  net_tibble <- readr::read_csv(
-    resp_str,
-    skip = 1,
-    col_names = c(
-      "STATION_NUMBER",
-      "STATION_NAME",
-      "LATITUDE",
-      "LONGITUDE",
-      "PROV_TERR_STATE_LOC",
-      "TIMEZONE"
-    ),
-    col_types = readr::cols(
-      STATION_NUMBER = readr::col_character(),
-      STATION_NAME = readr::col_character(),
-      LATITUDE = readr::col_double(),
-      LONGITUDE = readr::col_double(),
-      PROV_TERR_STATE_LOC = readr::col_character(),
-      TIMEZONE = readr::col_character()
+  if (is.na(resp_str)) {
+    net_tibble <- dplyr::tibble(
+      STATION_NUMBER = NA_character_,
+      STATION_NAME = NA_character_,
+      LATITUDE = NA_real_,
+      LONGITUDE = NA_real_,
+      PROV_TERR_STATE_LOC = NA_character_,
+      TIMEZONE = NA_character_
     )
-  )
+  } else {
+    net_tibble <- readr::read_csv(
+      resp_str,
+      skip = 1,
+      col_names = c(
+        "STATION_NUMBER",
+        "STATION_NAME",
+        "LATITUDE",
+        "LONGITUDE",
+        "PROV_TERR_STATE_LOC",
+        "TIMEZONE"
+      ),
+      col_types = readr::cols(
+        STATION_NUMBER = readr::col_character(),
+        STATION_NAME = readr::col_character(),
+        LATITUDE = readr::col_double(),
+        LONGITUDE = readr::col_double(),
+        PROV_TERR_STATE_LOC = readr::col_character(),
+        TIMEZONE = readr::col_character()
+      )
+    )
+  }
 
   if (is.null(prov)) {
     return(net_tibble)
@@ -225,4 +243,9 @@ realtime_daily_mean <- function(.data, na.rm = FALSE) {
   df_mean <- dplyr::arrange(df_mean, Parameter)
 
   dplyr::ungroup(df_mean)
+}
+
+
+base_url_datamart <- function() {
+  "https://dd.weather.gc.ca/today/hydrometric/"
 }

@@ -12,7 +12,7 @@
 
 <meta name="author" content="Dewey Dunnington" />
 
-<meta name="date" content="2025-03-11" />
+<meta name="date" content="2025-10-22" />
 
 <title>Stepping into the HYDAT Database</title>
 
@@ -50,8 +50,9 @@ overflow: visible;
 }
 </style>
 <style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -62,7 +63,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -340,7 +341,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Stepping into the HYDAT Database</h1>
 <h4 class="author">Dewey Dunnington</h4>
-<h4 class="date">2025-03-11</h4>
+<h4 class="date">2025-10-22</h4>
 
 
 
@@ -370,16 +371,18 @@ to the database is use <code>hy_src()</code>.</p>
 <p>To list the tables, use <code>src_tbls()</code> from the
 <strong>dplyr</strong> package.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">src_tbls</span>(src)</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;AGENCY_LIST&quot;            &quot;ANNUAL_INSTANT_PEAKS&quot;   &quot;ANNUAL_STATISTICS&quot;      &quot;CONCENTRATION_SYMBOLS&quot;  &quot;DATA_SYMBOLS&quot;           &quot;DATA_TYPES&quot;             &quot;DATUM_LIST&quot;            </span></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt;  [8] &quot;DLY_FLOWS&quot;              &quot;DLY_LEVELS&quot;             &quot;MEASUREMENT_CODES&quot;      &quot;OPERATION_CODES&quot;        &quot;PEAK_CODES&quot;             &quot;PRECISION_CODES&quot;        &quot;REGIONAL_OFFICE_LIST&quot;  </span></span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; [15] &quot;SAMPLE_REMARK_CODES&quot;    &quot;SED_DATA_TYPES&quot;         &quot;SED_DLY_LOADS&quot;          &quot;SED_DLY_SUSCON&quot;         &quot;SED_SAMPLES&quot;            &quot;SED_SAMPLES_PSD&quot;        &quot;SED_VERTICAL_LOCATION&quot; </span></span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; [22] &quot;SED_VERTICAL_SYMBOLS&quot;   &quot;STATIONS&quot;               &quot;STN_DATA_COLLECTION&quot;    &quot;STN_DATA_RANGE&quot;         &quot;STN_DATUM_CONVERSION&quot;   &quot;STN_DATUM_UNRELATED&quot;    &quot;STN_OPERATION_SCHEDULE&quot;</span></span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; [29] &quot;STN_REGULATION&quot;         &quot;STN_REMARKS&quot;            &quot;STN_REMARK_CODES&quot;       &quot;STN_STATUS_CODES&quot;       &quot;VERSION&quot;</span></span></code></pre></div>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;AGENCY_LIST&quot;            &quot;ANNUAL_INSTANT_PEAKS&quot;   &quot;ANNUAL_STATISTICS&quot;      &quot;CONCENTRATION_SYMBOLS&quot;  &quot;DATA_SYMBOLS&quot;          </span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt;  [6] &quot;DATA_TYPES&quot;             &quot;DATUM_LIST&quot;             &quot;DLY_FLOWS&quot;              &quot;DLY_LEVELS&quot;             &quot;MEASUREMENT_CODES&quot;     </span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; [11] &quot;OPERATION_CODES&quot;        &quot;PEAK_CODES&quot;             &quot;PRECISION_CODES&quot;        &quot;REGIONAL_OFFICE_LIST&quot;   &quot;SAMPLE_REMARK_CODES&quot;   </span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; [16] &quot;SED_DATA_TYPES&quot;         &quot;SED_DLY_LOADS&quot;          &quot;SED_DLY_SUSCON&quot;         &quot;SED_SAMPLES&quot;            &quot;SED_SAMPLES_PSD&quot;       </span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; [21] &quot;SED_VERTICAL_LOCATION&quot;  &quot;SED_VERTICAL_SYMBOLS&quot;   &quot;STATIONS&quot;               &quot;STN_DATA_COLLECTION&quot;    &quot;STN_DATA_RANGE&quot;        </span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt; [26] &quot;STN_DATUM_CONVERSION&quot;   &quot;STN_DATUM_UNRELATED&quot;    &quot;STN_OPERATION_SCHEDULE&quot; &quot;STN_REGULATION&quot;         &quot;STN_REMARKS&quot;           </span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; [31] &quot;STN_REMARK_CODES&quot;       &quot;STN_STATUS_CODES&quot;       &quot;VERSION&quot;</span></span></code></pre></div>
 <p>To inspect any particular table, use the <code>tbl()</code> function
 with the <code>src</code> and the table name.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">tbl</span>(src, <span class="st">&quot;STN_OPERATION_SCHEDULE&quot;</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt; # Source:   table&lt;`STN_OPERATION_SCHEDULE`&gt; [?? x 5]</span></span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; # Database: sqlite 3.46.0 [/Users/samalbers/_dev/gh_repos/tidyhydat/inst/test_db/tinyhydat.sqlite3]</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; # Database: sqlite 3.50.4 [/Users/sam.albers/_dev/gh_repos/tidyhydat/inst/test_db/tinyhydat.sqlite3]</span></span>
 <span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt;    STATION_NUMBER DATA_TYPE  YEAR MONTH_FROM MONTH_TO</span></span>
 <span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;          &lt;chr&gt;     &lt;int&gt; &lt;chr&gt;      &lt;chr&gt;   </span></span>
 <span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt;  1 05AA008        H          2012 JAN        DEC     </span></span>
