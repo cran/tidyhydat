@@ -5,24 +5,24 @@
 \title{Download realtime data from the ECCC web service}
 \format{
 A tibble with 6 variables:
-\describe{
-\item{STATION_NUMBER}{Unique 7 digit Water Survey of Canada station number}
-\item{Date}{Observation date and time. Formatted as a POSIXct class as UTC for consistency.}
-\item{Name_En}{Code name in English}
-\item{Value}{Value of the measurement.}
-\item{Unit}{Value units}
-\item{Grade}{future use}
-\item{Symbol}{future use}
-\item{Approval}{future use}
-\item{Parameter}{Numeric parameter code}
-\item{Code}{Letter parameter code}
+\itemize{
+\item \strong{STATION_NUMBER}: Unique 7 digit Water Survey of Canada station number
+\item \strong{Date}: Observation date and time. Formatted as a POSIXct class as UTC for consistency.
+\item \strong{Name_En}: Code name in English
+\item \strong{Value}: Value of the measurement.
+\item \strong{Unit}: Value units
+\item \strong{Grade}: future use
+\item \strong{Symbol}: future use
+\item \strong{Approval}: future use
+\item \strong{Parameter}: Numeric parameter code
+\item \strong{Code}: Letter parameter code
 }
 }
 \usage{
 realtime_ws(
   station_number,
   parameters = NULL,
-  start_date = Sys.Date() - 30,
+  start_date = Sys.Date() - lubridate::days(30),
   end_date = Sys.Date()
 )
 }
@@ -34,11 +34,11 @@ for some options though undocumented parameters may be implemented. Defaults to 
 Tertiary water level, Discharge Provisional, Discharge, sensor, Water temperature, Secondary water temperature, Accumulated precipitation}
 
 \item{start_date}{Accepts either YYYY-MM-DD or YYYY-MM-DD HH:MM:SS.
-If only start date is supplied (i.e. YYYY-MM-DD) values are returned from the start of that day.
+If only `start date`` is supplied (i.e. YYYY-MM-DD) values are returned from the start of that day.
 Defaults to 30 days before current date. Time is supplied in UTC.}
 
 \item{end_date}{Accepts either YYYY-MM-DD or YYYY-MM-DD HH:MM:SS.
-If only a date is supplied (i.e. YYYY-MM-DD) values are returned from the end of that day.
+If only `end_date`` is supplied (i.e. YYYY-MM-DD) values are returned from the end of that day.
 Defaults to current date. Time is supplied in UTC.}
 }
 \description{
@@ -60,7 +60,7 @@ fivedays <- realtime_ws(
   station_number = c("08NL071", "08NM174"),
   parameters = c(47, 5),
   end_date = Sys.Date(), # today
-  start_date = Sys.Date() - 5 # five days ago
+  start_date = Sys.Date() - lubridate::days(5) # five days ago
 )
 }
 }

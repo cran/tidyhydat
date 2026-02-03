@@ -10,9 +10,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and limitations under the License.
 
-#' @title Function to chose a station based on consistent arguments for hydat functions.
+#' Function to chose a station based on consistent arguments for hydat functions.
 #'
-#' @description A function to avoid duplication in HYDAT functions.  This function is not intended for external use.
+#' A function to avoid duplication in HYDAT functions.  This function is not intended for external use.
 #'
 #' @inheritParams hy_stations
 #' @param hydat_con A database connection
@@ -245,9 +245,9 @@ tidyhydat_agent <- function(req) {
 
 #' Convenience function to pull station number from tidyhydat functions
 #'
-#' This function mimics \code{dplyr::pull} to avoid having to always type
+#' This function mimics `dplyr::pull` to avoid having to always type
 #' dplyr::pull(STATION_NUMBER). Instead we can now take advantage of autocomplete.
-#' This can be used with \code{realtime_} and \code{hy_} functions.
+#' This can be used with `realtime_` and `hy_` functions.
 #'
 #' @param .data A table of data
 #'
@@ -320,4 +320,76 @@ tidyhydat_perform <- function(req, ...) {
   req <- httr2::req_retry(req, max_tries = 5)
   req <- httr2::req_progress(req)
   httr2::req_perform(req, ...)
+}
+
+validate_params <- function(parameters, start_date, end_date) {
+
+
+  if (!is.numeric(parameters)) stop("parameters should be a number", call. = FALSE)
+
+
+  if (!grepl("[0-9]{4}-[0-1][0-9]-[0-3][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9]", start_date)) {
+    stop(
+      "Invalid date format. start_date need to be in either YYYY-MM-DD or YYYY-MM-DD HH:MM:SS formats",
+      call. = FALSE
+    )
+  }
+
+  if (!grepl("[0-9]{4}-[0-1][0-9]-[0-3][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9]", end_date)) {
+    stop(
+      "Invalid date format. start_date need to be in either YYYY-MM-DD or YYYY-MM-DD HH:MM:SS formats",
+      call. = FALSE
+    )
+  }
+
+
+  if (!is.null(start_date) & !is.null(end_date)) {
+    if (lubridate::ymd_hms(end_date) < lubridate::ymd_hms(start_date)) {
+      stop(
+        "start_date is after end_date. Try swapping values.",
+        call. = FALSE
+      )
+    }
+  }
+
+  ## Check date is in the right format
+  if (is.na(as.Date(start_date, format = "%Y-%m-%d")) | is.na(as.Date(end_date, format = "%Y-%m-%d"))) {
+    stop("Invalid date format. Dates need to be in YYYY-MM-DD format")
+  }
+
+  invisible(TRUE)
+}
+
+construct_url <- function(
+  venue = "realtime", 
+  baseurl, 
+  station_number, 
+  parameters, 
+  start_date, 
+  end_date
+  ) {
+  station_string <- paste0("stations[]=", station_number, collapse = "&")
+  parameters_string <- paste0("parameters[]=", parameters, collapse = "&")
+  if (venue == "realtime") {
+    date_string <- paste0(
+      "start_date=", substr(start_date, 1, 10), "%20", substr(start_date, 12, 19),
+      "&end_date=", substr(end_date, 1, 10), "%20", substr(end_date, 12, 19)
+    )
+  } 
+  
+  if (venue == "historical"){
+    date_string <- paste0(
+      "start_date=", start_date,
+      "&end_date=", end_date
+    )
+  }
+  
+
+  ## paste them all together
+  paste0(
+    baseurl,
+    station_string, "&",
+    parameters_string, "&",
+    date_string
+  )
 }

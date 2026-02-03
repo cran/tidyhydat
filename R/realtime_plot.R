@@ -85,8 +85,8 @@ plot.realtime <- function(x = NULL, Parameter = c("Flow", "Level"), ...) {
     mgp = c(3.1, 0.4, 0),
     las = 1,
     tck = -.01,
-    xaxs = "i",
-    yaxs = "i"
+    xaxs = "r",
+    yaxs = "r"
   )
 
   graphics::plot(
@@ -130,7 +130,7 @@ plot.realtime <- function(x = NULL, Parameter = c("Flow", "Level"), ...) {
 #' Convenience function to plot realtime data
 #'
 #' This is an easy way to visualize a single station using base R graphics.
-#' More complicated plotting needs should consider using \code{ggplot2}. Inputting more
+#' More complicated plotting needs should consider using `ggplot2`. Inputting more
 #' 5 stations will result in very busy plots and longer load time. Legend position will
 #' sometimes overlap plotted points.
 #'

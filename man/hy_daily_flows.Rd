@@ -2,15 +2,15 @@
 % Please edit documentation in R/hy_daily_flows.R
 \name{hy_daily_flows}
 \alias{hy_daily_flows}
-\title{Extract daily flows information from the HYDAT database}
+\title{Extract daily flows information from HYDAT database or web service}
 \format{
 A tibble with 5 variables:
-\describe{
-\item{STATION_NUMBER}{Unique 7 digit Water Survey of Canada station number}
-\item{Date}{Observation date. Formatted as a Date class.}
-\item{Parameter}{Parameter being measured. Only possible value is Flow}
-\item{Value}{Discharge value. The units are m^3/s.}
-\item{Symbol}{Measurement/river conditions}
+\itemize{
+\item \strong{STATION_NUMBER}: Unique 7 digit Water Survey of Canada station number
+\item \strong{Date}: Observation date. Formatted as a Date class.
+\item \strong{Parameter}: Parameter being measured. Only possible value is Flow
+\item \strong{Value}: Discharge value. The units are m^3/s.
+\item \strong{Symbol}: Measurement/river conditions
 }
 }
 \source{
@@ -32,7 +32,7 @@ is returned.}
 
 \item{hydat_path}{The path to the hydat database or NULL to use the default location
 used by \link{download_hydat}. It is also possible to pass in an existing
-\link[dplyr]{src_sqlite} such that the database only needs to be opened once per
+database connection from \code{\link[=hy_src]{hy_src()}} such that the database only needs to be opened once per
 user-level call.}
 
 \item{prov_terr_state_loc}{Province, state or territory. If this argument is omitted, the value of \code{station_number}
@@ -49,9 +49,18 @@ value is \code{code}.}
 A tibble of daily flows
 }
 \description{
-Provides wrapper to turn the DLY_FLOWS table in HYDAT into a tidy data frame of daily flows.
-\code{station_number} and \code{prov_terr_state_loc} can both be supplied. If both are omitted all
-values from the \code{hy_stations} table are returned. That is a large tibble for \code{hy_daily_flows}.
+Provides wrapper to turn the DLY_FLOWS table in HYDAT (or historical web service)
+into a tidy data frame of daily flows. \code{station_number} and \code{prov_terr_state_loc} can both be
+supplied. If both are omitted all values from the \code{hy_stations} table are returned.
+That is a large tibble for \code{hy_daily_flows}.
+}
+\details{
+The \code{hydat_path} argument controls the data source:
+\itemize{
+\item \strong{NULL} (default): Uses local HYDAT database (default location)
+\item \strong{FALSE}: Forces use of historical web service (requires \code{start_date} and \code{end_date})
+\item \strong{Path string}: Uses HYDAT database at the specified path
+}
 }
 \examples{
 \dontrun{
